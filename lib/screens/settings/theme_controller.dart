@@ -8,15 +8,15 @@ class ThemeController extends BaseController {
   static ThemeController get to => Get.find();
   final theme = "light".obs;
   final store = PreferenceImpl();
-  late ThemeMode _themeMode;
+  ThemeMode? _themeMode;
 
-  ThemeMode get themeMode => _themeMode;
+  ThemeMode? get themeMode => _themeMode;
   String get currentTheme => theme.value;
 
   Future<void> setThemeMode(String value) async {
     theme.value = value;
     _themeMode = getThemeModeFromString(value);
-    Get.changeThemeMode(_themeMode);
+    Get.changeThemeMode(_themeMode!);
     callDataService(
       store.writeStore(key: PreferenceManager.keyTheme, value: value),
       onSuccess: (response) {
@@ -41,8 +41,10 @@ class ThemeController extends BaseController {
     callDataService(
       store.readStore(key: PreferenceManager.keyTheme),
       onSuccess: (response) {
-        String _themeString = response as String;
-        if (_themeString == "system") _themeString = 'light';
+        String _themeString = "";
+        if (response == null) {
+          _themeString = 'light';
+        } else if (response == "system") _themeString = 'light';
         setThemeMode(_themeString);
         update();
       },
@@ -54,5 +56,11 @@ class ThemeController extends BaseController {
       return true;
     }
     return false;
+  }
+
+  @override
+  void onReady() async {
+    await getThemeModeFromStore();
+    super.onReady();
   }
 }

@@ -31,15 +31,13 @@ abstract class BaseView<Controller extends BaseController> extends GetView<Contr
 
   Widget annotatedRegion(BuildContext context) {
     return AnnotatedRegion(
-      value: SystemUiOverlayStyle(
-        //Status bar color for android
-        statusBarColor: statusBarColor(),
-        statusBarIconBrightness: Brightness.dark,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: pageScaffold(context),
-      ),
+      value: SystemUiOverlayStyle.dark,
+      // value: SystemUiOverlayStyle(
+      //   //Status bar color for android
+      //   statusBarColor: statusBarColor(),
+      //   statusBarIconBrightness: Brightness.dark,
+      // ),
+      child: pageScaffold(context),
     );
   }
 
@@ -58,7 +56,18 @@ abstract class BaseView<Controller extends BaseController> extends GetView<Contr
 
   Widget pageContent(BuildContext context) {
     return SafeArea(
-      child: body(context),
+      top: false,
+      bottom: false,
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: AppColors.colorGradientScreen,
+          ),
+        ),
+        child: body(context),
+      ),
     );
   }
 
@@ -80,7 +89,7 @@ abstract class BaseView<Controller extends BaseController> extends GetView<Contr
   }
 
   Color statusBarColor() {
-    return AppColors.pageBackground;
+    return AppColors.colorWhite;
   }
 
   Widget? floatingActionButton() {

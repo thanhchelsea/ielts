@@ -5,22 +5,21 @@ import '../../index.dart';
 
 class MainView extends StatelessWidget {
   MainView({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    ThemeController.to.getThemeModeFromStore();
     return GetBuilder<ThemeController>(
       builder: (controller) {
         return GetBuilder<LanguageController>(
           builder: (languageController) {
             return GetMaterialApp(
+              onInit: () {},
               translations: Localization(),
               locale: languageController.getLocale,
               navigatorObservers: [],
               debugShowCheckedModeBanner: false,
               theme: AppThemes.lightTheme(context), //AppThemes.lightTheme,
               darkTheme: AppThemes.darkTheme(context),
-              themeMode: controller.themeMode,
+              themeMode: controller.themeMode ?? ThemeMode.light,
               initialRoute: RouterNames.HOME,
               getPages: AppRoutes.routes,
             );
