@@ -6,7 +6,7 @@ class PreferenceImpl implements PreferenceManager {
 
   @override
   Future<dynamic> readStore({required String key}) async {
-    return await _storage.read(key);
+    return _storage.read(key);
   }
 
   @override
@@ -22,7 +22,7 @@ class PreferenceImpl implements PreferenceManager {
 
   @override
   Future<bool> remove(String key) {
-    // TODO: implement remove
+    _storage.remove(key);
     throw UnimplementedError();
   }
 }

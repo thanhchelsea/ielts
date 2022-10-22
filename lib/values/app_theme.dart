@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'index.dart';
 
 class AppThemes {
@@ -28,7 +27,9 @@ class AppThemes {
         color: const Color(0xFF9C9C9C),
       ),
       indicatorColor: const Color(0xFF565656),
-      iconTheme: baseTheme.iconTheme.copyWith(color: const Color(0xFF212633)),
+      iconTheme: baseTheme.iconTheme.copyWith(
+        color: Colors.black,
+      ),
       scaffoldBackgroundColor: Colors.white,
       dividerTheme: const DividerThemeData(
         thickness: 1.0,

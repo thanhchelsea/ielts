@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// The 2018 spec has thirteen text styles:
 /// ```
@@ -19,15 +20,120 @@ import 'package:flutter/material.dart';
 /// ```
 ///
 class StyleApp {
+  static TextStyle pageTitle({
+    double? fontSize,
+    Color? color,
+  }) {
+    return TextStyle(
+      fontSize: fontSize,
+      fontWeight: FontWeight.w600,
+      color: color,
+    );
+  }
+
+//headline
+  static TextStyle headlineNormal({
+    double fontSize = 18,
+    Color? color,
+  }) {
+    return TextStyle(
+      fontSize: fontSize.sp,
+      // fontWeight: FontWeight.w600,
+      color: color,
+    );
+  }
+
+  static TextStyle headlineBold({
+    double? fontSize = 18,
+    Color? color,
+  }) {
+    return TextStyle(
+      fontSize: fontSize ?? 18.sp,
+      fontWeight: FontWeight.w700,
+      color: color,
+    );
+  }
+
+//title
+//title bold
+  static TextStyle titleBold({
+    double fontSize = 16,
+    Color? color,
+    FontWeight? fontWeight,
+  }) {
+    return TextStyle(
+      fontSize: fontSize.sp,
+      fontWeight: fontWeight ?? FontWeight.w700,
+      color: color,
+    );
+  }
+
+  //title small
+  static TextStyle titleExtraSmall({
+    double fontSize = 12,
+    Color? color,
+    FontWeight? fontWeight,
+  }) {
+    return TextStyle(
+      fontSize: fontSize.sp,
+      fontWeight: fontWeight,
+      color: color,
+    );
+  }
+
+  //title small
+  static TextStyle titleSmall({
+    double fontSize = 14,
+    Color? color,
+  }) {
+    return TextStyle(
+      fontSize: fontSize.sp,
+      // fontWeight: FontWeight.w700,
+      color: color,
+    );
+  }
+
+  //title nornam
+  static TextStyle titleNormal({
+    double fontSize = 16,
+    Color? color,
+  }) {
+    return TextStyle(
+      fontSize: fontSize.sp,
+      // fontWeight: FontWeight.w700,
+      color: color,
+    );
+  }
+
+  // title button
+  static TextStyle titleButton({
+    double fontSize = 14,
+    Color? color,
+  }) {
+    return TextStyle(
+      fontSize: fontSize.sp,
+      fontWeight: FontWeight.w700,
+      color: color ?? Colors.white,
+    );
+  }
+
+//________________________________________
+  // di an cap
+
   static Color getShimmerColor(BuildContext context) {
     return Colors.grey;
   }
 
   //- Dùng cho tiêu đề in đậm (Semi-bold)
-  static TextStyle titleBoldStyle(BuildContext context, {double? fontSize, Color? color}) {
+  static TextStyle titleBoldStyle(
+    BuildContext context, {
+    double? fontSize,
+    Color? color,
+  }) {
     return StyleApp.subtitle1(context, true)!.copyWith(
       color: color,
       fontWeight: FontWeight.w600,
+      fontSize: fontSize,
     );
   }
 
@@ -80,6 +186,7 @@ class StyleApp {
     return StyleApp.bodyText1(context)!.copyWith(
       color: color,
       fontWeight: fontWeight,
+      fontSize: fontSize,
     );
   }
 
@@ -93,6 +200,7 @@ class StyleApp {
     return StyleApp.caption(context)!.copyWith(
       color: color,
       fontWeight: fontWeight,
+      fontSize: fontSize,
     );
   }
 
