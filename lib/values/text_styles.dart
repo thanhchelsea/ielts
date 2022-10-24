@@ -214,6 +214,7 @@ class StyleApp {
     return StyleApp.subtitle1(context)!.copyWith(
       color: color,
       fontWeight: fontWeight,
+      fontSize: fontSize,
     );
   }
 

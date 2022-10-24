@@ -33,20 +33,22 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
       centerTitle: false,
       elevation: elevation,
       shadowColor: Color.fromARGB(66, 240, 240, 240),
-      automaticallyImplyLeading: isBackButtonEnabled,
+      automaticallyImplyLeading: false,
       actions: actions,
       title: Row(
         children: [
           Container(
-            padding: EdgeInsets.only(right: 14.w),
+            padding: EdgeInsets.only(right: padding14),
             child: showBackScreen
-                ? InkWell(
-                    onTap: () {
+                ? IconButton(
+                    padding: EdgeInsets.all(0),
+                    onPressed: () {
                       Get.back();
                     },
-                    child: const Icon(
+                    icon: const Icon(
                       Icons.navigate_before,
                       color: Colors.black,
+                      size: 34,
                     ),
                   )
                 : InkWell(

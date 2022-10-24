@@ -90,7 +90,9 @@ class HomeUi extends BaseView<HomeController> {
                   child: skillIelts(
                     nameSkill: "Speaking",
                     imagePath: AppImages.conversation,
-                    onPress: () {},
+                    onPress: () {
+                      Get.toNamed(RouterNames.LEVEL_SKILL);
+                    },
                   ),
                 ),
                 SizedBox(width: padding),
@@ -172,72 +174,77 @@ class HomeUi extends BaseView<HomeController> {
 
   Widget skillIelts({required String nameSkill, required String imagePath, required Function onPress}) {
     double borderRadius = 25;
-    return Container(
-      width: Get.width / 3,
-      padding: EdgeInsets.only(
-        // left: 20,
-        // right: 20,
-        top: largePadding,
-        bottom: padding,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
-        color: AppColors.colorBoldCardPrimary,
-      ),
-      child: Column(
-        children: [
-          Image(
-            width: 60.w,
-            // height: 40.w,
-            fit: BoxFit.fill,
-            image: AssetImage(
-              imagePath,
-            ),
-          ),
-          SizedBox(height: 24.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(child: Container()),
-              Expanded(
-                flex: 5,
-                child: Text(
-                  nameSkill,
-                  style: StyleApp.titleNormal(color: Colors.white),
-                ),
+    return GestureDetector(
+      onTap: () {
+        onPress();
+      },
+      child: Container(
+        width: Get.width / 3,
+        padding: EdgeInsets.only(
+          // left: 20,
+          // right: 20,
+          top: largePadding,
+          bottom: padding,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(borderRadius),
+          color: AppColors.colorBoldCardPrimary,
+        ),
+        child: Column(
+          children: [
+            Image(
+              width: 60.w,
+              // height: 40.w,
+              fit: BoxFit.fill,
+              image: AssetImage(
+                imagePath,
               ),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 19.w,
-                    height: 19.w,
-                    decoration: const BoxDecoration(
-                      color: AppColors.colorCardPrimary,
-                      shape: BoxShape.circle,
-                    ),
+            ),
+            SizedBox(height: 20.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(child: Container()),
+                Expanded(
+                  flex: 5,
+                  child: Text(
+                    nameSkill,
+                    style: StyleApp.titleNormal(color: Colors.white),
                   ),
-                  Positioned(
-                    right: -10,
-                    child: Container(
-                      alignment: Alignment.center,
+                ),
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: 19.w,
+                      height: 19.w,
                       decoration: const BoxDecoration(
-                        color: AppColors.colorWhite,
+                        color: AppColors.colorCardPrimary,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
-                        Icons.navigate_next,
-                        size: 22,
-                        color: Color(0xff396BBD),
+                    ),
+                    Positioned(
+                      right: -10,
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          color: AppColors.colorWhite,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.navigate_next,
+                          size: 22,
+                          color: Color(0xff396BBD),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Expanded(child: Container()),
-            ],
-          )
-        ],
+                  ],
+                ),
+                Expanded(child: Container()),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -269,7 +276,7 @@ class HomeUi extends BaseView<HomeController> {
   }
 
   Widget itemRemind(int index) {
-    double borderRadius = 20;
+    double borderRadius = 18;
     return Container(
       margin: EdgeInsets.only(bottom: halfPadding),
       decoration: BoxDecoration(
@@ -302,8 +309,8 @@ class HomeUi extends BaseView<HomeController> {
               ),
               child: Container(
                 child: Image(
-                  width: 40.w,
-                  height: 32.w,
+                  width: 36.w,
+                  height: 28.w,
                   // fit: BoxFit.fill,
                   image: AssetImage(AppImages.conversation),
                 ),
