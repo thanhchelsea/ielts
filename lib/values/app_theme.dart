@@ -40,7 +40,7 @@ class AppThemes {
       disabledColor: Colors.grey[400],
       elevatedButtonTheme: getElevatedButtonTheme(
         textTheme,
-        primaryColor: const Color(0xFF3366FF),
+        primaryColor: Colors.white,
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: getOutlinedButtonTheme(textTheme).style?.copyWith(

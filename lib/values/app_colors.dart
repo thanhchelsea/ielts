@@ -4,7 +4,7 @@ abstract class AppColors {
   static const Color colorPrimaryApp = Color(0xffE30224);
   static const Color colorCardPrimary = Color(0xffD3E7FF);
   static const Color colorBoldCardPrimary = Color(0xff3F7AD9);
-
+  static const Color colorTextPrimay = Color(0xff477CD1);
   static const Color pageBackground = Color(0xFFFAFBFD);
   static const List<Color> colorGradientScreen = [
     Color(0xffE5FFFF),

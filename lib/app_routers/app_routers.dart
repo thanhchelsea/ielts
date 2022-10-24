@@ -1,7 +1,5 @@
 import 'package:get/get.dart';
 import 'package:ielts/screens/home/bindings.dart';
-import 'package:ielts/screens/level_skill/bindings.dart';
-import 'package:ielts/screens/level_skill/view.dart';
 import 'package:ielts/screens/sign_in/bindings.dart';
 import 'package:ielts/screens/sign_in/view.dart';
 
@@ -25,6 +23,11 @@ class AppRoutes {
       binding: LevelSkillBindings(),
       page: () => LevelSkillUI(),
     ),
+    GetPage(
+      name: RouterNames.SPEAKING,
+      binding: SpeakingBindings(),
+      page: () => SpeakingUI(),
+    ),
   ];
 }
 
@@ -34,4 +37,5 @@ class RouterNames {
   static const SIGN_IN = '/sign_in';
   static const HOME = '/home';
   static const LEVEL_SKILL = '/level_skill';
+  static const SPEAKING = '/speaking';
 }
