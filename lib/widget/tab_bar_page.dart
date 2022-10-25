@@ -8,12 +8,13 @@ class TabBarPage extends StatelessWidget {
   TabBarPage({
     Key? key,
     required this.currentNameTab,
-    required this.imageIcon,
     required this.nameTab,
     required this.onPressed,
+    required this.iconData,
   }) : super(key: key);
 
-  String nameTab, imageIcon, currentNameTab;
+  String nameTab, currentNameTab;
+  IconData iconData;
   Function onPressed;
   @override
   Widget build(BuildContext context) {
@@ -22,8 +23,7 @@ class TabBarPage extends StatelessWidget {
 
   Widget tabBar() {
     return Container(
-      // color: Colors.red,
-      margin: EdgeInsets.only(right: 3),
+      margin: const EdgeInsets.only(right: 3),
       child: Row(
         children: [
           Container(
@@ -52,10 +52,9 @@ class TabBarPage extends StatelessWidget {
               },
               child: Row(
                 children: [
-                  Image(
-                    width: 23.w,
-                    height: 20.h,
-                    image: AssetImage(imageIcon),
+                  Icon(
+                    iconData,
+                    color: currentNameTab == nameTab ? AppColors.colorBoldCardPrimary : Color(0xffD7DDE7),
                   ),
                   currentNameTab == nameTab ? SizedBox(width: halfPadding) : Container(),
                   currentNameTab == nameTab

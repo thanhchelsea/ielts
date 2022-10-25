@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:ielts/index.dart';
 
@@ -56,9 +57,10 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
                     child: Container(
                       width: 22.w,
                       height: 18.h,
-                      child: Image(
-                        fit: BoxFit.contain,
-                        image: AssetImage(AppImages.menu),
+                      child: SvgPicture.asset(
+                        AppImages.menu,
+
+                        // height: 24.w,
                       ),
                     ),
                   ),

@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:ielts/screens/home/bindings.dart';
 import 'package:ielts/screens/sign_in/bindings.dart';
 import 'package:ielts/screens/sign_in/view.dart';
+import 'package:ielts/screens/splash/bindings.dart';
+import 'package:ielts/screens/splash/view.dart';
 
 import '../screens/index.dart';
 
@@ -28,6 +30,11 @@ class AppRoutes {
       binding: SpeakingBindings(),
       page: () => SpeakingUI(),
     ),
+    GetPage(
+      name: RouterNames.SPLASH,
+      binding: SplashBindings(),
+      page: () => SplashUI(),
+    ),
   ];
 }
 
@@ -38,4 +45,5 @@ class RouterNames {
   static const HOME = '/home';
   static const LEVEL_SKILL = '/level_skill';
   static const SPEAKING = '/speaking';
+  static const SPLASH = '/splash';
 }

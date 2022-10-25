@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:ielts/base/index.dart';
 import 'package:ielts/screens/sign_in/controller.dart';
@@ -55,10 +56,9 @@ class SignInUI extends BaseView<SignInController> {
   Widget logo(BuildContext context) {
     return Column(
       children: [
-        Image(
+        SvgPicture.asset(
+          AppImages.logoInApp,
           width: 130.w,
-          image: AssetImage(AppImages.logoInApp),
-          fit: BoxFit.cover,
         ),
       ],
     );
@@ -75,7 +75,7 @@ class SignInUI extends BaseView<SignInController> {
             children: [
               InputFiledCustom(
                 controller: controller.userName,
-                iconPrefix: Icon(AppIcons.mic),
+                iconPrefix: Icon(AppIcons.user),
                 labelText: 'Username',
                 validator: (p0) {
                   return null;
@@ -88,8 +88,8 @@ class SignInUI extends BaseView<SignInController> {
               SizedBox(height: 16),
               InputFiledCustom(
                 controller: controller.password,
-                iconPrefix: Icon(AppIcons.sound),
-                labelText: 'auth.password'.tr,
+                iconPrefix: Icon(AppIcons.lock),
+                labelText: 'Password',
                 validator: (p0) {
                   return null;
 
@@ -114,7 +114,7 @@ class SignInUI extends BaseView<SignInController> {
             child: PrimaryButton(
               labelText: "Login",
               onPressed: () {
-                controller.signIn();
+                controller.signInWithAccount();
               },
               width: 150.w,
             ),

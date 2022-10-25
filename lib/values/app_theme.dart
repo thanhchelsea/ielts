@@ -12,15 +12,15 @@ class AppThemes {
     );
     return baseTheme.copyWith(
       textTheme: textTheme,
-      primaryColor: const Color(0xFF3366FF),
+      primaryColor: AppColors.colorPrimaryApp2,
       canvasColor: const Color(0xFFFFFFFF),
       buttonTheme: const ButtonThemeData(
-        buttonColor: Color(0xFF3366FF),
+        buttonColor: AppColors.colorPrimaryApp2,
       ),
-      floatingActionButtonTheme:
-          const FloatingActionButtonThemeData(backgroundColor: Color(0xFF3366FF), foregroundColor: Colors.white),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: AppColors.colorPrimaryApp2, foregroundColor: Colors.white),
       cardColor: Colors.white,
-      toggleableActiveColor: const Color(0xFF3366FF),
+      toggleableActiveColor: AppColors.colorPrimaryApp2,
       errorColor: Colors.redAccent,
       backgroundColor: Colors.white,
       primaryIconTheme: baseTheme.iconTheme.copyWith(
@@ -54,7 +54,7 @@ class AppThemes {
       ),
       textButtonTheme: getTextButtonTheme(textTheme),
       tabBarTheme: baseTheme.tabBarTheme.copyWith(
-        labelColor: const Color(0xFF3366FF),
+        labelColor: AppColors.colorPrimaryApp2,
         labelStyle: tabBarTextStyle(textTheme)?.copyWith(fontWeight: FontWeight.bold),
         unselectedLabelStyle: tabBarTextStyle(textTheme),
         unselectedLabelColor: const Color(0xFF8E9ABB),
@@ -70,7 +70,7 @@ class AppThemes {
         onSecondary: const Color(0xFF6AA4D2),
         background: const Color(0xFFEAEAF0),
         onPrimary: Colors.white,
-        primary: const Color(0xFF3366FF),
+        primary: AppColors.colorPrimaryApp2,
         onBackground: const Color(0xFF0095DE),
         onSurface: Colors.black87,
         surface: const Color(0xFFEDEDED),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:ielts/base/index.dart';
 import 'package:ielts/index.dart';
@@ -19,11 +20,11 @@ class HomeUi extends BaseView<HomeController> {
               elevation: 0,
               backgroundColor: Colors.transparent,
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: 10.h),
             infoUser(),
-            SizedBox(height: 36.h),
+            SizedBox(height: 20.h),
             skill(),
-            SizedBox(height: 36.h),
+            SizedBox(height: 26.h),
             remindWidget(),
           ],
         ),
@@ -42,19 +43,21 @@ class HomeUi extends BaseView<HomeController> {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "Hi Mike!",
                       style: StyleApp.headlineNormal(),
                     ),
-                    const SizedBox(width: 16),
-                    Image(
-                      width: 28.w,
-                      height: 28.w,
-                      fit: BoxFit.fill,
-                      image: AssetImage(AppImages.wave),
-                    )
+                    SizedBox(width: padding_4),
+                    Container(
+                      // color: Colors.red,
+                      child: SvgPicture.asset(
+                        AppImages.wave,
+                        width: 28.w,
+                        // height: 24.w,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -141,7 +144,7 @@ class HomeUi extends BaseView<HomeController> {
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.colorPrimaryApp,
-                  borderRadius: BorderRadius.circular(borderRadius),
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
                   children: [
@@ -161,10 +164,8 @@ class HomeUi extends BaseView<HomeController> {
             ],
           ),
           Container(
-            child: Image(
-              width: 120.w,
-              fit: BoxFit.fill,
-              image: AssetImage(AppImages.computer),
+            child: SvgPicture.asset(
+              AppImages.computer,
             ),
           ),
         ],
@@ -192,13 +193,9 @@ class HomeUi extends BaseView<HomeController> {
         ),
         child: Column(
           children: [
-            Image(
+            SvgPicture.asset(
+              imagePath,
               width: 60.w,
-              // height: 40.w,
-              fit: BoxFit.fill,
-              image: AssetImage(
-                imagePath,
-              ),
             ),
             SizedBox(height: 20.h),
             Row(
@@ -219,7 +216,7 @@ class HomeUi extends BaseView<HomeController> {
                       width: 19.w,
                       height: 19.w,
                       decoration: const BoxDecoration(
-                        color: AppColors.colorCardPrimary,
+                        color: Color(0xff6DA5F8),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -308,11 +305,9 @@ class HomeUi extends BaseView<HomeController> {
                 color: AppColors.colorBoldCardPrimary,
               ),
               child: Container(
-                child: Image(
+                child: SvgPicture.asset(
+                  AppImages.conversation,
                   width: 36.w,
-                  height: 28.w,
-                  // fit: BoxFit.fill,
-                  image: AssetImage(AppImages.conversation),
                 ),
               ),
             ),

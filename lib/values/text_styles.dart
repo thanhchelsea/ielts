@@ -70,12 +70,12 @@ class StyleApp {
 
   //title small
   static TextStyle titleExtraSmall({
-    double fontSize = 12,
+    double? fontSize,
     Color? color,
     FontWeight? fontWeight,
   }) {
     return TextStyle(
-      fontSize: fontSize.sp,
+      fontSize: fontSize ?? 12.sp,
       fontWeight: fontWeight,
       color: color,
     );
@@ -83,11 +83,11 @@ class StyleApp {
 
   //title small
   static TextStyle titleSmall({
-    double fontSize = 14,
+    double? fontSize,
     Color? color,
   }) {
     return TextStyle(
-      fontSize: fontSize.sp,
+      fontSize: fontSize ?? 14.sp,
       // fontWeight: FontWeight.w700,
       color: color,
     );

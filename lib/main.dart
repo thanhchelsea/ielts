@@ -9,7 +9,6 @@ import 'package:ielts/screens/main/main_view.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
-
   MainBindings().dependencies();
   ScreenUtil.init(
     BoxConstraints(

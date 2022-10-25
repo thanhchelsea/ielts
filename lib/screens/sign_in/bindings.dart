@@ -6,6 +6,6 @@ class SignBindings extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut(() => SignInController(), fenix: true);
-    Get.lazyPut(() => InputPrimaryController());
+    Get.create<InputPrimaryController>(() => InputPrimaryController());
   }
 }

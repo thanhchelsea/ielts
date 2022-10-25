@@ -22,7 +22,6 @@ abstract class BaseView<Controller extends BaseController> extends GetView<Contr
         children: [
           annotatedRegion(context),
           Obx(() => controller.pageState == PageState.LOADING ? _showLoading() : Container()),
-          Obx(() => controller.errorMessage.isNotEmpty ? showErrorSnackBar(controller.errorMessage) : Container()),
           Container(),
         ],
       ),
@@ -69,15 +68,6 @@ abstract class BaseView<Controller extends BaseController> extends GetView<Contr
         child: body(context),
       ),
     );
-  }
-
-  Widget showErrorSnackBar(String message) {
-    final snackBar = SnackBar(content: Text(message));
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
-    });
-
-    return Container();
   }
 
   void showToast(String message) {

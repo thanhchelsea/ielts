@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import '../models/index.dart';
+import '../repositories/exceptions/index.dart';
 
 abstract class BaseController extends GetxController {
 //language
@@ -39,6 +42,7 @@ abstract class BaseController extends GetxController {
 
   showErrorMessage(String msg) {
     _errorMessageController(msg);
+    showErrorSnackBar(msg);
   }
 
   final _successMessageController = ''.obs;
@@ -67,14 +71,46 @@ abstract class BaseController extends GetxController {
       onComplete == null ? hideLoading() : onComplete();
 
       return response;
+    } on ServiceUnavailableException catch (exception) {
+      _exception = exception;
+      showErrorMessage(exception.message);
+    } on UnauthorizedException catch (exception) {
+      _exception = exception;
+      showErrorMessage(exception.message);
+    } on TimeoutException catch (exception) {
+      _exception = exception;
+      showErrorMessage(exception.message);
+    } on NetworkException catch (exception) {
+      _exception = exception;
+      showErrorMessage(exception.message);
+    } on JsonFormatException catch (exception) {
+      _exception = exception;
+      showErrorMessage(exception.message);
+    } on NotFoundException catch (exception) {
+      _exception = exception;
+      showErrorMessage(exception.message);
+    } on ApiException catch (exception) {
+      _exception = exception;
+    } on AppException catch (exception) {
+      _exception = exception;
+      showErrorMessage(exception.message);
     } catch (error) {
-      _exception = Exception("$error");
-      log(error.toString());
+      _exception = AppException(message: "$error");
+      Logger().e("Controller>>>>>> error $error");
     }
 
     if (onError != null) onError(_exception);
 
     onComplete == null ? hideLoading() : onComplete();
+  }
+
+  Widget showErrorSnackBar(String message) {
+    final snackBar = SnackBar(content: Text(message));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
+    });
+
+    return Container();
   }
 
   @override

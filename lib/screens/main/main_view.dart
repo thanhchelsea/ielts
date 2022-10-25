@@ -20,7 +20,7 @@ class MainView extends StatelessWidget {
               theme: AppThemes.lightTheme(context), //AppThemes.lightTheme,
               darkTheme: AppThemes.darkTheme(context),
               themeMode: controller.themeMode ?? ThemeMode.light,
-              initialRoute: RouterNames.SIGN_IN,
+              initialRoute: RouterNames.SPLASH,
               getPages: AppRoutes.routes,
             );
           },

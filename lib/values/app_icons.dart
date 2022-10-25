@@ -29,4 +29,11 @@ class AppIcons {
   static const IconData save = IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData sound = IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData turnoff_mic = IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData history = IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData finsh = IconData(0xe80a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData lock = IconData(0xe80d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData user = IconData(0xe80e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData comment = IconData(0xe80f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData dowload_file = IconData(0xe810, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData practice = IconData(0xe811, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
