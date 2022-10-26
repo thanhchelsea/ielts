@@ -10,4 +10,10 @@ class Configs {
 
   static const int SUCCESS = 0;
   static const int FAIL = -1;
+
+  //topic
+  static final int TOPIC_TYPE_LESSON = 1;
+  static final int TOPIC_TYPE_EXCIRSE = 2;
+  static final int TOPIC_TYPE_TEST = 3;
+  static final int TOPIC_TYPE_CATEGORY = 4;
 }

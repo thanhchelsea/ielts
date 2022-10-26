@@ -9,7 +9,7 @@ import '../index.dart';
 class ApiConfig {
   static const BASE_URL =
       //  "https://v1-dot-ielts-fighters.appspot.com/api/app/";
-      'https://v2-dot-comaiphuong-edu.appspot.com/api/app';
+      'https://v2-dot-ielts-lydia.appspot.com/api/app';
   static const TOKEN = "LAQaifUvHUWMCln8ve0VmnVaMCQrKIZS";
 }
 
@@ -22,7 +22,7 @@ class DioProvider {
   static final _prettyDioLogger = PrettyDioLogger(
     requestHeader: false,
     requestBody: true,
-    responseBody: true,
+    responseBody: false,
     responseHeader: false,
     error: true,
     compact: true,

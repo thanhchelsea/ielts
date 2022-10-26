@@ -8,12 +8,19 @@ class SignInController extends BaseController {
   static SignInController to = Get.find();
   TextEditingController userName = TextEditingController();
   TextEditingController password = TextEditingController();
-  ServerRepository serverRep = ServerRepository();
+  ServerRepository serverRepo = ServerRepository();
   final store = PreferenceImpl();
 
   Rxn<User> user = Rxn<User>();
+
+  String getSessionId() {
+    if (user.value != null) return user.value!.sessionId;
+    print("Session Id empty");
+    return "";
+  }
+
   Future signInWithAccount() async {
-    var loginService = serverRep.loginAccount(userName.text.trim(), password.text.trim());
+    var loginService = serverRepo.loginAccount(userName.text.trim(), password.text.trim());
     callDataService(
       loginService,
       onSuccess: (response) async {
@@ -31,7 +38,7 @@ class SignInController extends BaseController {
     bool check = false;
     String? sessionId = await store.readStore(key: PreferenceManager.sessionId);
     if (sessionId != null && sessionId.isNotEmpty) {
-      var loginService = serverRep.loginWithSessionId(sessionId);
+      var loginService = serverRepo.loginWithSessionId(sessionId);
       await callDataService(
         loginService,
         onSuccess: (response) async {

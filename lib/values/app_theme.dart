@@ -17,6 +17,7 @@ class AppThemes {
       buttonTheme: const ButtonThemeData(
         buttonColor: AppColors.colorPrimaryApp2,
       ),
+      shadowColor: Color(0xff6F87C3).withOpacity(0.25),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: AppColors.colorPrimaryApp2, foregroundColor: Colors.white),
       cardColor: Colors.white,
@@ -77,7 +78,7 @@ class AppThemes {
       ),
       cardTheme: baseTheme.cardTheme.copyWith(
         elevation: 0.0,
-        shadowColor: const Color(0xFFEAF0FD),
+        shadowColor: Color(0xff6F87C3).withOpacity(0.25),
       ),
     );
   }

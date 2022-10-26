@@ -10,6 +10,7 @@ abstract class AppColors {
   static const Color colorBoldCardPrimary = Color(0xff3F7AD9);
   static const Color colorTextPrimay = Color(0xff0285FE);
   static const Color pageBackground = Color(0xFFFAFBFD);
+  static Color shadowColor = Color(0xff6F87C3).withOpacity(0.25);
   static const List<Color> colorGradientScreen = [
     Color(0xffE5FFFF),
     Color(0xffF5F6F9),

@@ -58,6 +58,7 @@ abstract class BaseView<Controller extends BaseController> extends GetView<Contr
       top: false,
       bottom: false,
       child: Container(
+        width: Get.width,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topRight,

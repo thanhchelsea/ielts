@@ -94,7 +94,7 @@ class HomeUi extends BaseView<HomeController> {
                     nameSkill: "Speaking",
                     imagePath: AppImages.conversation,
                     onPress: () {
-                      Get.toNamed(RouterNames.SPEAKING);
+                      Get.toNamed(RouterNames.LEVEL_SKILL);
                     },
                   ),
                 ),

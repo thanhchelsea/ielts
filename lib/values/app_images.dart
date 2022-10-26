@@ -11,4 +11,6 @@ class AppImages {
   static String arrow = "assets/images/arrow.png";
   static String splash = "assets/images/splash.svg";
   static String loading = "assets/images/loading.gif";
+  static String video = "assets/images/video.svg";
+  static String praticeTopic = "assets/images/practice_topic.svg";
 }

@@ -85,10 +85,11 @@ class StyleApp {
   static TextStyle titleSmall({
     double? fontSize,
     Color? color,
+    FontWeight? fontWeight,
   }) {
     return TextStyle(
       fontSize: fontSize ?? 14.sp,
-      // fontWeight: FontWeight.w700,
+      fontWeight: fontWeight,
       color: color,
     );
   }

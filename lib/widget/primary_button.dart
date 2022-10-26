@@ -3,7 +3,7 @@ import 'package:ielts/index.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PrimaryButton extends StatelessWidget {
-  const PrimaryButton({
+  PrimaryButton({
     required this.labelText,
     required this.onPressed,
     this.colorBackground = AppColors.colorPrimaryApp,
@@ -12,6 +12,9 @@ class PrimaryButton extends StatelessWidget {
     this.fontWeight = FontWeight.w600,
     this.fontSizeText,
     this.showShadow = true,
+    this.padding,
+    this.borderRadius,
+    this.boxShadow,
   });
   final double? width;
   final String labelText;
@@ -21,6 +24,9 @@ class PrimaryButton extends StatelessWidget {
   final FontWeight fontWeight;
   final double? fontSizeText;
   final bool showShadow;
+  final EdgeInsets? padding;
+  final BoxShadow? boxShadow;
+  double? borderRadius;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,27 +34,31 @@ class PrimaryButton extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: showShadow
             ? [
-                BoxShadow(
-                  blurRadius: 15,
-                  spreadRadius: 0,
-                  offset: Offset(0, 15),
-                  color: Color(0xffFFBBC7).withOpacity(0.5),
-                )
+                boxShadow ??
+                    BoxShadow(
+                      blurRadius: 15,
+                      spreadRadius: 0,
+                      offset: Offset(0, 15),
+                      color: Color(0xffFFBBC7).withOpacity(0.5),
+                    )
               ]
-            : null,
+            : [],
       ),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           shadowColor: colorBackground.withOpacity(0.2),
           primary: colorBackground,
+          minimumSize: padding != null ? Size.zero : null, // Set this
+          padding: padding != null ? EdgeInsets.zero : null, // and this
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(borderRadius ?? 20),
           ),
         ),
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: padding14),
-          width: double.infinity,
+          padding: padding ?? EdgeInsets.symmetric(vertical: padding14),
+          // width: double.infinity,
           child: Text(
             labelText,
             textAlign: TextAlign.center,
