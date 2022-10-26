@@ -10,13 +10,16 @@ class SplashController extends BaseController {
     // await Future.delayed(
     //   Duration(seconds: 3),
     // );
-    String sessionId = await store.readStore(key: PreferenceManager.sessionId) ?? "";
+    String sessionId =
+        await store.readStore(key: PreferenceManager.sessionId) ?? "";
     bool check = await SignInController.to.signInWithToken();
     return check;
   }
 
   @override
   void onReady() async {
+    Get.offAllNamed(RouterNames.SIGN_IN);
+    return;
     Future.delayed(
       const Duration(seconds: 1),
       () {

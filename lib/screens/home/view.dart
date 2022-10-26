@@ -140,7 +140,7 @@ class HomeUi extends BaseView<HomeController> {
               Container(
                 padding: EdgeInsets.symmetric(
                   horizontal: padding,
-                  vertical: halfPadding.h,
+                  vertical: halfPadding,
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.colorPrimaryApp,
@@ -173,7 +173,10 @@ class HomeUi extends BaseView<HomeController> {
     );
   }
 
-  Widget skillIelts({required String nameSkill, required String imagePath, required Function onPress}) {
+  Widget skillIelts(
+      {required String nameSkill,
+      required String imagePath,
+      required Function onPress}) {
     double borderRadius = 25;
     return GestureDetector(
       onTap: () {
@@ -221,8 +224,10 @@ class HomeUi extends BaseView<HomeController> {
                       ),
                     ),
                     Positioned(
-                      right: -10,
+                      right: -8.w,
                       child: Container(
+                        width: 19.w,
+                        height: 19.w,
                         alignment: Alignment.center,
                         decoration: const BoxDecoration(
                           color: AppColors.colorWhite,
@@ -299,7 +304,8 @@ class HomeUi extends BaseView<HomeController> {
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: padding10, vertical: padding12),
+              padding: EdgeInsets.symmetric(
+                  horizontal: padding10, vertical: padding12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(borderRadius),
                 color: AppColors.colorBoldCardPrimary,
@@ -323,7 +329,8 @@ class HomeUi extends BaseView<HomeController> {
                   "Pratice now to unlock the next level",
                   style: StyleApp.titleExtraSmall(
                     fontWeight: FontWeight.w400,
-                    color: Get.theme.textTheme.bodyText1!.color!.withOpacity(0.8),
+                    color:
+                        Get.theme.textTheme.bodyText1!.color!.withOpacity(0.8),
                   ),
                 ),
               ],

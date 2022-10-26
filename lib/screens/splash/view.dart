@@ -23,6 +23,8 @@ class SplashUI extends BaseView<SplashController> {
           SvgPicture.asset(
             AppImages.splash,
             width: Get.width,
+            // height: Get.height,
+            fit: BoxFit.fill,
           ),
           Positioned(
             top: Get.height / 3,

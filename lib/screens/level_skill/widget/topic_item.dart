@@ -24,10 +24,15 @@ class TopicItemNew extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => TopicItemNewState(
-      size: this.size, color: this.color, topicIndex: this.topicIndex, topic: this.topic, tapToStudy: this.tapToStudy);
+      size: this.size,
+      color: this.color,
+      topicIndex: this.topicIndex,
+      topic: this.topic,
+      tapToStudy: this.tapToStudy);
 }
 
-class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderStateMixin {
+class TopicItemNewState extends State<TopicItemNew>
+    with SingleTickerProviderStateMixin {
   final double size;
   final Color color;
   final int topicIndex;
@@ -79,7 +84,8 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
         width: size,
         height: size,
         child: AnimatedBuilder(
-          animation: CurvedAnimation(parent: _animation, curve: Curves.fastOutSlowIn),
+          animation:
+              CurvedAnimation(parent: _animation, curve: Curves.fastOutSlowIn),
           builder: (context, child) {
             return Stack(
               alignment: Alignment.center,
@@ -107,8 +113,8 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
             clipBehavior: Clip.none,
             children: [
               Positioned(
-                top: 10,
-                right: -16,
+                top: 10.h,
+                right: -16.w,
                 child: _makeTopicTitle(),
               ),
             ],
@@ -121,14 +127,17 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
   Widget _makeTopicTitle() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: padding12, vertical: 7.h),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20), boxShadow: [
-        BoxShadow(
-          blurRadius: 10,
-          offset: Offset(0, 4),
-          spreadRadius: 0,
-          color: AppColors.shadowColor,
-        )
-      ]),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 10,
+              offset: Offset(0, 4),
+              spreadRadius: 0,
+              color: AppColors.shadowColor,
+            )
+          ]),
       child: Text(
         "${topic.name}",
         style: StyleApp.titleSmall(
@@ -163,7 +172,10 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
         decoration: BoxDecoration(
           color: colorOutside,
         ),
-        padding: EdgeInsets.symmetric(vertical: padding10, horizontal: padding10),
+        padding: EdgeInsets.symmetric(
+          vertical: padding10,
+          horizontal: padding10,
+        ),
         child: ClipPolygon(
           sides: 6,
           borderRadius: 12.0,
@@ -174,21 +186,29 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
               ),
             ),
             child: Container(
+              height: 300,
               padding: EdgeInsets.symmetric(horizontal: padding_4),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SvgPicture.asset(
-                    topic.type == Configs.TOPIC_TYPE_LESSON ? AppImages.video : AppImages.praticeTopic,
-                    width: 25.h,
+                    topic.type == Configs.TOPIC_TYPE_LESSON
+                        ? AppImages.video
+                        : AppImages.praticeTopic,
+                    width: 25.w,
                   ),
                   SizedBox(height: padding_4),
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      topic.type == Configs.TOPIC_TYPE_LESSON ? "Video" : "Practice",
+                      topic.type == Configs.TOPIC_TYPE_LESSON
+                          ? "Video"
+                          : "Practice",
                       maxLines: 1,
-                      style: StyleApp.titleSmall(color: colorText, fontSize: 9.sp, fontWeight: FontWeight.w600),
+                      style: StyleApp.titleSmall(
+                          color: colorText,
+                          fontSize: 9.sp,
+                          fontWeight: FontWeight.w600),
                     ),
                   ),
                 ],
