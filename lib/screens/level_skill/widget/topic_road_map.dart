@@ -19,8 +19,8 @@ Size ratio = Size(428, 926);
 double headerRatio = 235 / ratio.height;
 double paddingRowEvenRatio = 50 / ratio.width;
 double topicItemSizeRatio = 64 / ratio.width;
-double topicItemSize = 102.4.w;
-double padding = 30;
+double topicItemSize = 92.4.w;
+double paddingScrren = 24.w;
 
 class _TopicRoadMapState extends State<TopicRoadMap> {
   int rowTopic = 0, currentPart = 0;
@@ -78,15 +78,12 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
           widgets.add(widget);
         }
       } else {
-        childs.insert(
-            0, _makeTopicItem(topic, index, topic.id == lastChildLock));
+        childs.insert(0, _makeTopicItem(topic, index, topic.id == lastChildLock));
         if (childs.length == 2) {
           List<Widget> cs = [];
           cs.addAll(childs);
           widget = Padding(
-            padding: EdgeInsets.only(
-                left: size.width * paddingRowEvenRatio,
-                right: size.width * paddingRowEvenRatio),
+            padding: EdgeInsets.only(left: size.width * paddingRowEvenRatio, right: size.width * paddingRowEvenRatio),
             child: _makeTopicsRow(cs),
           );
           temp++;
@@ -101,9 +98,7 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
         widgets.add(widget);
       } else {
         widget = Padding(
-          padding: EdgeInsets.only(
-              left: size.width * paddingRowEvenRatio,
-              right: size.width * paddingRowEvenRatio),
+          padding: EdgeInsets.only(left: size.width * paddingRowEvenRatio, right: size.width * paddingRowEvenRatio),
           child: _makeTopicsRow(childs),
         );
         widgets.add(widget);
@@ -111,8 +106,7 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
     }
     rowTopic = widgets.length;
     return Padding(
-      padding:
-          EdgeInsets.only(top: 0, left: padding, bottom: 100, right: padding),
+      padding: EdgeInsets.only(top: 0, left: paddingScrren, bottom: 100, right: paddingScrren),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: widgets,
@@ -149,8 +143,7 @@ class Drawline extends CustomPainter {
   final Color color;
   late Paint _paint;
 
-  Drawline(
-      {required this.row, required this.currentPart, required this.color}) {
+  Drawline({required this.row, required this.currentPart, required this.color}) {
     _paint = new Paint();
     _paint.color = color;
     _paint.style = PaintingStyle.stroke;
@@ -160,43 +153,28 @@ class Drawline extends CustomPainter {
   drawLine(Canvas canvas, double x, double y, Size size, int limit) {
     var path = Path();
     path.moveTo(x, y);
-    path.lineTo(x + (size.width - (padding + topicItemSize / 2) * 2), y);
+    path.lineTo(x + (size.width - (paddingScrren + topicItemSize / 2) * 2), y);
     canvas.drawPath(
-      dashPathWidthLimit(path,
-          dashArray: CircularIntervalList<double>(<double>[5, 10]),
-          limit: limit),
+      dashPathWidthLimit(path, dashArray: CircularIntervalList<double>(<double>[5, 10]), limit: limit),
       _paint,
     );
     path.close();
   }
 
-  drawHaftCircle(
-      Canvas canvas, double x, double y, Size size, String rotate, int limit) {
+  drawHaftCircle(Canvas canvas, double x, double y, Size size, String rotate, int limit) {
     var path = Path();
     if (rotate == 'left') {
       path.moveTo(x, y);
       path.cubicTo(
-          x - topicItemSize * 2 / Math.pi,
-          y,
-          x - topicItemSize * 2 / Math.pi,
-          y + topicItemSize,
-          x,
-          y + topicItemSize);
+          x - topicItemSize * 2 / Math.pi, y, x - topicItemSize * 2 / Math.pi, y + topicItemSize, x, y + topicItemSize);
     } else {
-      x = x + size.width - (padding + topicItemSize / 2) * 2;
+      x = x + size.width - (paddingScrren + topicItemSize / 2) * 2;
       path.moveTo(x, y);
       path.cubicTo(
-          topicItemSize * 2 / Math.pi + x,
-          y,
-          topicItemSize * 2 / Math.pi + x,
-          topicItemSize + y,
-          x,
-          y + topicItemSize);
+          topicItemSize * 2 / Math.pi + x, y, topicItemSize * 2 / Math.pi + x, topicItemSize + y, x, y + topicItemSize);
     }
     canvas.drawPath(
-      dashPathWidthLimit(path,
-          dashArray: CircularIntervalList<double>(<double>[5, 10]),
-          limit: limit),
+      dashPathWidthLimit(path, dashArray: CircularIntervalList<double>(<double>[5, 10]), limit: limit),
       _paint,
     );
     path.close();
@@ -221,9 +199,9 @@ class Drawline extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    double lineLength = size.width - (padding + topicItemSize / 2) * 2;
-    int maxUnderLine = (lineLength / (5 + 10))
-        .round(); // 5 + 10 = CircularIntervalList<double>(<double>[5, 10]), dấu gạch nối
+    double lineLength = size.width - (paddingScrren + topicItemSize / 2) * 2;
+    int maxUnderLine =
+        (lineLength / (5 + 10)).round(); // 5 + 10 = CircularIntervalList<double>(<double>[5, 10]), dấu gạch nối
     MyPossition possition = _findPossition(currentPart + 1);
     for (int index = 0; index < row; index++) {
       int limitLine = 0, limitCircle = 0;
@@ -249,16 +227,10 @@ class Drawline extends CustomPainter {
           limitCircle = 0;
         }
       }
-      drawLine(canvas, padding + topicItemSize / 2,
-          topicItemSize / 2 + topicItemSize * index, size, limitLine);
+      drawLine(canvas, paddingScrren + topicItemSize / 2, topicItemSize / 2 + topicItemSize * index, size, limitLine);
       if (index < row - 1) {
-        drawHaftCircle(
-            canvas,
-            padding + topicItemSize / 2,
-            topicItemSize / 2 + topicItemSize * index,
-            size,
-            index % 2 == 0 ? 'right' : 'left',
-            limitCircle);
+        drawHaftCircle(canvas, paddingScrren + topicItemSize / 2, topicItemSize / 2 + topicItemSize * index, size,
+            index % 2 == 0 ? 'right' : 'left', limitCircle);
       }
     }
   }
