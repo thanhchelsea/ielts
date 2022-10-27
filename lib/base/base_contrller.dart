@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ielts/index.dart';
 import 'package:logger/logger.dart';
 import '../models/index.dart';
 import '../repositories/exceptions/index.dart';
@@ -92,9 +93,16 @@ abstract class BaseController extends GetxController {
     } on ApiException catch (exception) {
       _exception = exception;
     } on AppException catch (exception) {
+      print("dsds ${exception.message}");
       _exception = exception;
-      showErrorMessage(exception.message);
+      if (exception.message == Configs.LOGIN_NOT_EXISTED.toString()) {
+        showErrorMessage("Vui lòng đăng nhập lại <3.");
+        Get.offAllNamed(RouterNames.SIGN_IN);
+      } else {
+        showErrorMessage(exception.message);
+      }
     } catch (error) {
+      print("dsds1111");
       _exception = AppException(message: "$error");
       Logger().e("Controller>>>>>> error $error");
     }

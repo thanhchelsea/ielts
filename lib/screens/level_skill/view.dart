@@ -31,6 +31,9 @@ class LevelSkillUI extends BaseView<LevelSkillController> {
             return Expanded(
               child: TopicRoadMap(
                 topics: controller.topicChilds[controller.topicSelected.value?.id ?? 0] ?? [],
+                tapToic: (t) {
+                  controller.selectTopicChild(t);
+                },
               ),
             );
           },

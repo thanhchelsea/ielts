@@ -6,7 +6,6 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SpeakingController extends BaseController {
-  RxString nameTab = "".obs;
   GlobalKey globalKeyListen = GlobalKey();
 
   String data = """Only you know how I feel
@@ -63,12 +62,6 @@ Only you know how I feel
 Only you know what I miss""";
   List<TargetFocus> listTargets = [];
   late TutorialCoachMark tutorialCoachMark;
-
-  void changeSelectTab(String name) {
-    if (nameTab.value != name) {
-      nameTab.value = name;
-    }
-  }
 
   void initTargets() {
     listTargets.add(
@@ -139,7 +132,6 @@ Only you know what I miss""";
 
   @override
   void onInit() async {
-    nameTab.value = "Practice";
     initTargets();
     showAppTutorial();
 
@@ -150,7 +142,7 @@ Only you know what I miss""";
   void onReady() async {
     if (Get.context == null) print("dmdmmd");
     await Future.delayed(
-      Duration(seconds: 1),
+      Duration(milliseconds: 500),
       () => tutorialCoachMark.show(context: Get.overlayContext!, rootOverlay: true),
     );
     super.onReady();

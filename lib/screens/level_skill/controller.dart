@@ -4,10 +4,13 @@ import 'package:ielts/index.dart';
 import 'package:ielts/screens/sign_in/index.dart';
 
 class LevelSkillController extends BaseController {
+  static LevelSkillController to = Get.find();
   RxList<Topic> topics = <Topic>[].obs;
   ServerRepository serverRepo = ServerRepository();
   HomeController homeC = Get.find();
   Rxn<Topic> topicSelected = Rxn<Topic>();
+  Rxn<Topic> topicChildSelected = Rxn<Topic>();
+
   RxMap<int, List<Topic>> topicChilds = RxMap<int, List<Topic>>();
   int courseId = 5112644562321408;
   Future loadTopicByParent({int? parentId}) async {
@@ -41,6 +44,22 @@ class LevelSkillController extends BaseController {
   void selectTopic(Topic t) {
     topicSelected.value = t;
     if (topicChilds[t.id] != null && topicChilds[t.id]!.isEmpty) loadTopicByParent(parentId: t.id);
+  }
+
+  void selectTopicChild(Topic t) {
+    topicChildSelected.value = t;
+    switch (t.type) {
+      case Configs.TOPIC_TYPE_LESSON:
+        {
+          Get.toNamed(RouterNames.VIDEO);
+          return;
+        }
+      case Configs.TOPIC_TYPE_TEST:
+        {
+          Get.toNamed(RouterNames.SPEAKING);
+          return;
+        }
+    }
   }
 
   @override

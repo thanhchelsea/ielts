@@ -66,7 +66,7 @@ abstract class BaseView<Controller extends BaseController> extends GetView<Contr
             colors: AppColors.colorGradientScreen,
           ),
         ),
-        child: body(context),
+        child: Container(height: Get.height, child: body(context)),
       ),
     );
   }

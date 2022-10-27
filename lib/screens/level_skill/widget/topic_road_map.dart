@@ -9,8 +9,13 @@ import 'dart:math' as Math;
 import 'package:path_drawing/path_drawing.dart';
 
 class TopicRoadMap extends StatefulWidget {
-  TopicRoadMap({Key? key, required this.topics}) : super(key: key);
+  TopicRoadMap({
+    Key? key,
+    required this.topics,
+    required this.tapToic,
+  }) : super(key: key);
   List<Topic> topics;
+  Function tapToic;
   @override
   State<TopicRoadMap> createState() => _TopicRoadMapState();
 }
@@ -132,6 +137,7 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
       topicIndex: index + 1,
       tapToStudy: (Topic topic) {
         print("tap");
+        widget.tapToic(topic);
       },
     );
   }

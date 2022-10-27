@@ -2,10 +2,8 @@ import 'package:get/get.dart';
 import 'package:ielts/screens/home/bindings.dart';
 import 'package:ielts/screens/sign_in/bindings.dart';
 import 'package:ielts/screens/sign_in/view.dart';
-import 'package:ielts/screens/splash/bindings.dart';
-import 'package:ielts/screens/splash/view.dart';
-
 import '../screens/index.dart';
+import '../screens/splash/index.dart';
 
 class AppRoutes {
   AppRoutes._(); //this is to prevent anyone from instantiating this object
@@ -35,6 +33,11 @@ class AppRoutes {
       binding: SplashBindings(),
       page: () => SplashUI(),
     ),
+    GetPage(
+      name: RouterNames.VIDEO,
+      binding: VideoBindings(),
+      page: () => VideoUI(),
+    ),
   ];
 }
 
@@ -46,4 +49,5 @@ class RouterNames {
   static const LEVEL_SKILL = '/level_skill';
   static const SPEAKING = '/speaking';
   static const SPLASH = '/splash';
+  static const VIDEO = '/video';
 }

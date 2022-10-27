@@ -15,6 +15,7 @@ class PrimaryButton extends StatelessWidget {
     this.padding,
     this.borderRadius,
     this.boxShadow,
+    this.titleWidget,
   });
   final double? width;
   final String labelText;
@@ -26,6 +27,7 @@ class PrimaryButton extends StatelessWidget {
   final bool showShadow;
   final EdgeInsets? padding;
   final BoxShadow? boxShadow;
+  final Widget? titleWidget;
   double? borderRadius;
   @override
   Widget build(BuildContext context) {
@@ -56,19 +58,20 @@ class PrimaryButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(borderRadius ?? 20),
           ),
         ),
-        child: Container(
-          padding: padding ?? EdgeInsets.symmetric(vertical: 14.h),
-          // width: double.infinity,
-          child: Text(
-            labelText,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: fontSizeText ?? 14.sp,
-              fontWeight: fontWeight,
-              color: colorText,
+        child: titleWidget ??
+            Container(
+              padding: padding ?? EdgeInsets.symmetric(vertical: 14.h),
+              // width: double.infinity,
+              child: Text(
+                labelText,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: fontSizeText ?? 14.sp,
+                  fontWeight: fontWeight,
+                  color: colorText,
+                ),
+              ),
             ),
-          ),
-        ),
       ),
     );
   }

@@ -23,30 +23,12 @@ class SpeakingUI extends BaseView<SpeakingController> {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Obx(
-                () => Container(
-                  margin: EdgeInsets.symmetric(horizontal: padding, vertical: halfPadding),
-                  child: Row(
-                    children: [
-                      TabBarPage(
-                        nameTab: "Practice",
-                        currentNameTab: controller.nameTab.value,
-                        iconData: AppIcons.practice,
-                        onPressed: () {
-                          // controller.tutorialCoachMark.show(context: context, rootOverlay: true);
-                          controller.changeSelectTab("Practice");
-                        },
-                      ),
-                      TabBarPage(
-                        nameTab: "History",
-                        iconData: AppIcons.history,
-                        currentNameTab: controller.nameTab.value,
-                        onPressed: () {
-                          controller.changeSelectTab("History");
-                        },
-                      ),
-                    ],
-                  ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: padding, vertical: halfPadding),
+                child: TabBarPage(
+                  nameTabs: ["Practice", "History"],
+                  iconTabs: [AppIcons.practice, AppIcons.history],
+                  id: Get.currentRoute,
                 ),
               ),
               Expanded(

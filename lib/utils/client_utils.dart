@@ -34,6 +34,11 @@ class ClientUltis {
           message = "Tài khoản không tồn tại";
           break;
         }
+      case Configs.LOGIN_NOT_EXISTED:
+        {
+          message = "${Configs.LOGIN_NOT_EXISTED}";
+          break;
+        }
     }
     return message;
   }
