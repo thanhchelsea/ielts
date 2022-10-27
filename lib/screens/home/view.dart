@@ -163,7 +163,7 @@ class HomeUi extends BaseView<HomeController> {
               )
             ],
           ),
-          Container(
+          Expanded(
             child: SvgPicture.asset(
               AppImages.computer,
             ),
@@ -228,14 +228,15 @@ class HomeUi extends BaseView<HomeController> {
                       child: Container(
                         width: 19.w,
                         height: 19.w,
+                        // padding: EdgeInsets.all(1),
                         alignment: Alignment.center,
                         decoration: const BoxDecoration(
                           color: AppColors.colorWhite,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.navigate_next,
-                          size: 22,
+                          size: 22.sp,
                           color: Color(0xff396BBD),
                         ),
                       ),

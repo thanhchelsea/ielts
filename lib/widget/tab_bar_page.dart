@@ -85,28 +85,38 @@ class TabBarPageWidget extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                primary: currentNameTab == nameTab ? Get.theme.cardColor : Colors.transparent,
+                primary: currentNameTab == nameTab
+                    ? Get.theme.cardColor
+                    : Colors.transparent,
               ),
               onPressed: () {
                 onPressed(nameTab);
               },
-              child: Row(
-                children: [
-                  Icon(
-                    iconData,
-                    color: currentNameTab == nameTab ? AppColors.colorBoldCardPrimary : Color(0xffA4AEBE),
-                  ),
-                  currentNameTab == nameTab ? SizedBox(width: halfPadding) : Container(),
-                  currentNameTab == nameTab
-                      ? Text(
-                          nameTab,
-                          style: StyleApp.titleSmall(
-                            fontSize: 12,
-                            color: AppColors.colorTextPrimay,
-                          ),
-                        )
-                      : Container()
-                ],
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: padding_6),
+                child: Row(
+                  children: [
+                    Icon(
+                      iconData,
+                      size: 20,
+                      color: currentNameTab == nameTab
+                          ? AppColors.colorBoldCardPrimary
+                          : Color(0xffA4AEBE),
+                    ),
+                    currentNameTab == nameTab
+                        ? SizedBox(width: halfPadding)
+                        : Container(),
+                    currentNameTab == nameTab
+                        ? Text(
+                            nameTab,
+                            style: StyleApp.titleSmall(
+                              fontSize: 12,
+                              color: AppColors.colorTextPrimay,
+                            ),
+                          )
+                        : Container()
+                  ],
+                ),
               ),
             ),
           ),
