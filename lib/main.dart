@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:ielts/screens/main/index.dart';
 import 'package:ielts/screens/main/main_view.dart';
-import 'package:ielts/screens/sign_in/index.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

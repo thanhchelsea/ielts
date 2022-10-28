@@ -42,4 +42,19 @@ class ClientUltis {
     }
     return message;
   }
+
+  static String getIdsFromList(List<dynamic> list) {
+    String data = '';
+    int index = 0;
+    for (var q in list) {
+      if (index > 0) {
+        data += ',';
+      }
+      data += "${q}";
+      index++;
+    }
+    data += '';
+    print(":xxxxxx $data");
+    return data;
+  }
 }

@@ -93,7 +93,6 @@ abstract class BaseController extends GetxController {
     } on ApiException catch (exception) {
       _exception = exception;
     } on AppException catch (exception) {
-      print("dsds ${exception.message}");
       _exception = exception;
       if (exception.message == Configs.LOGIN_NOT_EXISTED.toString()) {
         showErrorMessage("Vui lòng đăng nhập lại <3.");
@@ -102,7 +101,6 @@ abstract class BaseController extends GetxController {
         showErrorMessage(exception.message);
       }
     } catch (error) {
-      print("dsds1111");
       _exception = AppException(message: "$error");
       Logger().e("Controller>>>>>> error $error");
     }

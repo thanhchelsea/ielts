@@ -29,6 +29,7 @@ class Topic {
   int duration;
   int pass;
   MyCardData? myCardData;
+  List<int> documentIds;
   Topic({
     required this.id,
     required this.userId,
@@ -54,6 +55,7 @@ class Topic {
     required this.duration,
     required this.pass,
     this.myCardData,
+    required this.documentIds,
   });
   TopicProgress? topicProgress;
 
@@ -82,6 +84,7 @@ class Topic {
     int? duration,
     int? pass,
     MyCardData? myCardData,
+    List<int>? documentIds,
   }) {
     return Topic(
       id: id ?? this.id,
@@ -108,6 +111,7 @@ class Topic {
       duration: duration ?? this.duration,
       pass: pass ?? this.pass,
       myCardData: myCardData ?? this.myCardData,
+      documentIds: documentIds ?? this.documentIds,
     );
   }
 
@@ -137,6 +141,7 @@ class Topic {
       'duration': duration,
       'pass': pass,
       'myCardData': myCardData?.toMap(),
+      'documentIds': documentIds,
     };
   }
 
@@ -166,6 +171,7 @@ class Topic {
       duration: map['duration']?.toInt() ?? 0,
       pass: map['pass']?.toInt() ?? 0,
       myCardData: map['myCardData'] != null ? MyCardData.fromMap(map['myCardData']) : null,
+      documentIds: List<int>.from(map['documentIds']),
     );
   }
 
@@ -175,7 +181,7 @@ class Topic {
 
   @override
   String toString() {
-    return 'Topic(id: $id, userId: $userId, parentId: $parentId, courseId: $courseId, ranking: $ranking, lastUpdate: $lastUpdate, status: $status, startTime: $startTime, endTime: $endTime, name: $name, description: $description, totalCardNum: $totalCardNum, questionNumber: $questionNumber, timePractice: $timePractice, scoreScale: $scoreScale, questionPracticeNum: $questionPracticeNum, totalTest: $totalTest, childrentIds: $childrentIds, shortDescription: $shortDescription, type: $type, studyMode: $studyMode, duration: $duration, pass: $pass, myCardData: $myCardData)';
+    return 'Topic(id: $id, userId: $userId, parentId: $parentId, courseId: $courseId, ranking: $ranking, lastUpdate: $lastUpdate, status: $status, startTime: $startTime, endTime: $endTime, name: $name, description: $description, totalCardNum: $totalCardNum, questionNumber: $questionNumber, timePractice: $timePractice, scoreScale: $scoreScale, questionPracticeNum: $questionPracticeNum, totalTest: $totalTest, childrentIds: $childrentIds, shortDescription: $shortDescription, type: $type, studyMode: $studyMode, duration: $duration, pass: $pass, myCardData: $myCardData, documentIds: $documentIds)';
   }
 
   @override
@@ -206,7 +212,8 @@ class Topic {
         other.studyMode == studyMode &&
         other.duration == duration &&
         other.pass == pass &&
-        other.myCardData == myCardData;
+        other.myCardData == myCardData &&
+        listEquals(other.documentIds, documentIds);
   }
 
   @override
@@ -234,6 +241,7 @@ class Topic {
         studyMode.hashCode ^
         duration.hashCode ^
         pass.hashCode ^
-        myCardData.hashCode;
+        myCardData.hashCode ^
+        documentIds.hashCode;
   }
 }

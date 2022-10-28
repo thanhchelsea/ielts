@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get_connect/http/src/status/http_status.dart';
 import 'package:ielts/base/base_repository.dart';
 import 'package:ielts/utils/client_utils.dart';
@@ -11,6 +12,13 @@ import 'error_handlers.dart';
 import 'exceptions/index.dart';
 
 class ServerRepository extends BaseRepository {
+  ServerRepository._getIntance();
+  static ServerRepository? _intance;
+  factory ServerRepository() {
+    _intance ??= ServerRepository._getIntance();
+    return _intance!;
+  }
+
   var logger = Logger();
   Future<User?> loginAccount(String account, String password) async {
     User? user;
@@ -82,6 +90,45 @@ class ServerRepository extends BaseRepository {
           return Topic.fromMap(e);
         }).toList();
         return topics;
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Document>> getDocument({required List<int> idsDocument}) async {
+    String endPoint = "${ApiConfig.BASE_URL}/get-documents";
+    List<Document> documents = [];
+    var params = {
+      // "sessionId": sessionId,
+      "ids": ClientUltis.getIdsFromList(idsDocument),
+      "token": ApiConfig.TOKEN,
+    };
+    var dioCall = dioClient.post(endPoint, queryParameters: params);
+    try {
+      return callApiWithErrorParser(dioCall).then((response) {
+        Map<String, dynamic> data = response.data;
+        documents = (data['data'] as List).map((e) => Document.fromMap(e)).toList();
+        return documents;
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<VideoScenario?> getVideoScrenarios({required int topicId}) async {
+    String endPoint = "${ApiConfig.BASE_URL}/get-video-scenarios";
+    var params = {
+      // "sessionId": sessionId,
+      "topicId": topicId,
+      "token": ApiConfig.TOKEN,
+    };
+    var dioCall = dioClient.post(endPoint, queryParameters: params);
+    try {
+      return callApiWithErrorParser(dioCall).then((response) {
+        Map<String, dynamic> data = response.data;
+        VideoScenario videoScenario = VideoScenario.fromMap(data['data'][0]);
+        return videoScenario;
       });
     } catch (e) {
       rethrow;

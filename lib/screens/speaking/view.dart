@@ -23,34 +23,40 @@ class SpeakingUI extends BaseView<SpeakingController> {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: padding, vertical: halfPadding),
-                child: TabBarPage(
-                  nameTabs: ["Practice", "History"],
-                  iconTabs: [AppIcons.practice, AppIcons.history],
-                  id: Get.currentRoute,
-                ),
-              ),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: padding),
-                    padding: EdgeInsets.symmetric(horizontal: padding, vertical: padding),
-                    decoration: BoxDecoration(
-                      color: Get.theme.cardColor,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Text(
-                      controller.data,
-                    ),
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: padding, vertical: halfPadding),
+                  child: TabBarPage(
+                    nameTabs: ["Practice", "History"],
+                    iconTabs: [AppIcons.practice, AppIcons.history],
+                    id: Get.currentRoute,
+                    tabsView: [practiceView(), Text("document")],
                   ),
                 ),
-              )
+              ),
             ],
           ),
           Positioned(bottom: 0, child: bottomTab()),
         ],
+      ),
+    );
+  }
+
+  Widget practiceView() {
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          margin: EdgeInsets.symmetric(horizontal: padding),
+          padding: EdgeInsets.symmetric(horizontal: padding, vertical: padding),
+          decoration: BoxDecoration(
+            color: Get.theme.cardColor,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Text(
+            controller.data,
+          ),
+        ),
       ),
     );
   }

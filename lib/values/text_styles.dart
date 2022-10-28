@@ -96,12 +96,13 @@ class StyleApp {
 
   //title nornam
   static TextStyle titleNormal({
-    double fontSize = 16,
+    double? fontSize,
     Color? color,
+    FontWeight? fontWeight,
   }) {
     return TextStyle(
-      fontSize: fontSize.sp,
-      // fontWeight: FontWeight.w700,
+      fontSize: fontSize ?? 16.sp,
+      fontWeight: fontWeight,
       color: color,
     );
   }

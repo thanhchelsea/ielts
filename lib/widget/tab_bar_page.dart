@@ -9,12 +9,20 @@ class TabBarPage extends StatelessWidget {
     Key? key,
     required this.nameTabs,
     required this.iconTabs,
+    required this.tabsView,
     required this.id,
+    this.actionInsert = const [],
+    this.onTap,
+    this.showDivider = false,
     // required this.currentTab,
   }) : super(key: key);
   List<String> nameTabs;
   List<IconData> iconTabs;
+  List<Widget> tabsView;
   String id;
+  Function? onTap;
+  List<Widget> actionInsert;
+  bool showDivider;
   // String currentTab;
   @override
   Widget build(BuildContext context) {
@@ -26,17 +34,46 @@ class TabBarPage extends StatelessWidget {
         state.controller!.init(nameTabs);
       },
       builder: (controller) {
-        return Row(
-          children: List.generate(
-            nameTabs.length,
-            (index) => TabBarPageWidget(
-              nameTab: controller.listNameTab[index],
-              iconData: iconTabs[index],
-              currentNameTab: controller.currentNameTab.value,
-              onPressed: (tab) {
-                controller.changeSelectTab(tab);
-              },
-            ),
+        int indexCurrentTab = nameTabs.indexOf(controller.currentNameTab.value);
+        return Container(
+          height: Get.height,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        ...List.generate(
+                          nameTabs.length,
+                          (index) => TabBarPageWidget(
+                            nameTab: controller.listNameTab[index],
+                            iconData: iconTabs[index],
+                            currentNameTab: controller.currentNameTab.value,
+                            onPressed: (tab) {
+                              if (onTap != null && controller.currentNameTab.value != tab) onTap!(tab);
+                              controller.changeSelectTab(tab);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ...actionInsert,
+                ],
+              ),
+              showDivider
+                  ? Container(
+                      margin: EdgeInsets.only(top: 6),
+                      child: Divider(
+                        height: 10,
+                        thickness: 1,
+                        color: Color(0xffDDE2F1),
+                      ),
+                    )
+                  : Container(),
+              tabsView[indexCurrentTab < 0 ? 0 : indexCurrentTab]
+            ],
           ),
         );
       },
@@ -85,9 +122,7 @@ class TabBarPageWidget extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                primary: currentNameTab == nameTab
-                    ? Get.theme.cardColor
-                    : Colors.transparent,
+                primary: currentNameTab == nameTab ? Get.theme.cardColor : Colors.transparent,
               ),
               onPressed: () {
                 onPressed(nameTab);
@@ -99,13 +134,9 @@ class TabBarPageWidget extends StatelessWidget {
                     Icon(
                       iconData,
                       size: 20,
-                      color: currentNameTab == nameTab
-                          ? AppColors.colorBoldCardPrimary
-                          : Color(0xffA4AEBE),
+                      color: currentNameTab == nameTab ? AppColors.colorBoldCardPrimary : Color(0xffA4AEBE),
                     ),
-                    currentNameTab == nameTab
-                        ? SizedBox(width: halfPadding)
-                        : Container(),
+                    currentNameTab == nameTab ? SizedBox(width: halfPadding) : Container(),
                     currentNameTab == nameTab
                         ? Text(
                             nameTab,
