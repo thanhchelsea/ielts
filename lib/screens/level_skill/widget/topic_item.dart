@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_polygon/flutter_polygon.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ielts/index.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../models/topic.dart';
+import '../../../utils/app_colors.dart';
+import '../../../utils/config.dart';
 
 class TopicItemNew extends StatefulWidget {
   final bool showAnim;
@@ -35,7 +36,9 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
   final Function tapToStudy;
   double scale = 1.6;
   late AnimationController _animation;
-
+  double padding12 = 12.h;
+  double padding_4 = 4.h;
+  double padding10 = 10.h;
   TopicItemNewState(
       {required this.size,
       required this.color,
@@ -88,6 +91,7 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
                 _buildContainer((size / scale) * 1.4 * _animation.value, true),
                 _buildContainer((size / scale) * 1.6 * _animation.value, true),
                 _buildContainer((size / scale), false),
+                _makeTopicIndex(),
                 _makeTopicTitle(),
               ],
             );
@@ -95,6 +99,12 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
         ),
       );
     }
+    // return Container(
+    //   color: Colors.green,
+    //   width: size,
+    //   height: size,
+    //   child: Text(topic.name),
+    // );
     return Container(
       // color: Colors.green,
       width: size,
@@ -106,10 +116,25 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
           Stack(
             clipBehavior: Clip.none,
             children: [
+              _makeTopicIndex(),
               Positioned(
-                top: 10.h,
-                right: -16.w,
-                child: _makeTopicTitle(),
+                top: 10,
+                right: -16,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: padding12, vertical: 7.h),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    "${topic.name}",
+                    style: TextStyle(
+                      fontSize: 9.sp,
+                      color: AppColors.blue,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
               ),
             ],
           )
@@ -118,73 +143,63 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
     );
   }
 
+  Widget _makeTopicIndex() {
+    if (topic.progress?.progress == 100) {
+      return Center(child: null);
+    }
+    // if (topic.progress.lock == true) {
+    if (true) {
+      return Center(child: SvgPicture.asset(AppImages.praticeTopic, color: Color(0xFFBDB7B7), width: 14));
+    }
+    // return Center(
+    //     child: Text(
+    //   "${topic.getPercentComplete()}%",
+    //   style: TextStyle(color: Colors.white, fontFamily: "Rubik", fontWeight: FontWeight.w500, fontSize: 16),
+    // ));
+  }
+
   Widget _makeTopicTitle() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: padding12, vertical: 7.h),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20), boxShadow: [
-        BoxShadow(
-          blurRadius: 10,
-          offset: Offset(0, 4),
-          spreadRadius: 0,
-          color: AppColors.shadowColor,
-        )
-      ]),
-      child: Text(
-        "${topic.name}",
-        style: StyleApp.titleSmall(
-          fontSize: 9.sp,
-          color: AppColors.colorActive,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
-    );
+    return Text("${topic.name}dd",
+        style: TextStyle(color: Color(0xFF0C1127), fontSize: 14, fontWeight: FontWeight.w600, fontFamily: "Nutino"));
   }
 
   Widget _buildContainer(double radius, bool opacity) {
-    Color colorOutside = Color(0xffD3E7FF);
-    Color colorText = AppColors.colorWhite;
-
-    List<Color> colors = [
-      Color(0xff3F7BDD),
-      Color(0xff88B9FF),
-    ];
-    if (topic.topicProgress?.progress == 100) {
-      colorText = AppColors.colorInActive;
-      colorOutside = Colors.white;
-      colors = [
-        Color(0xffEDF0F8),
-        Color(0xffEDF0F8),
-      ];
-    }
+    // if (topic.progress.lock == true) {
+    //   return Container(
+    //     width: radius,
+    //     height: radius,
+    //     decoration: BoxDecoration(
+    //         shape: BoxShape.circle, color: Colors.white, border: Border.all(width: 1, color: Color(0xFFDEDEDE))),
+    //   );
+    // }
     return ClipPolygon(
       sides: 6,
       borderRadius: 12.0,
       child: Container(
-        decoration: BoxDecoration(
-          color: colorOutside,
+        decoration: const BoxDecoration(
+          color: Color(0xffD3E7FF),
         ),
-        padding: EdgeInsets.symmetric(
-          vertical: padding10,
-          horizontal: padding10,
-        ),
+        padding: EdgeInsets.symmetric(vertical: padding10, horizontal: padding10),
         child: ClipPolygon(
           sides: 6,
           borderRadius: 12.0,
           child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: RadialGradient(
-                colors: colors,
+                colors: [
+                  Color(0xff3F7BDD),
+                  Color(0xff88B9FF),
+                ],
               ),
             ),
             child: Container(
-              height: 300,
               padding: EdgeInsets.symmetric(horizontal: padding_4),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SvgPicture.asset(
                     topic.type == Configs.TOPIC_TYPE_LESSON ? AppImages.video : AppImages.praticeTopic,
-                    width: 25.w,
+                    width: 25.h,
                   ),
                   SizedBox(height: padding_4),
                   FittedBox(
@@ -192,7 +207,7 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
                     child: Text(
                       topic.type == Configs.TOPIC_TYPE_LESSON ? "Video" : "Practice",
                       maxLines: 1,
-                      style: StyleApp.titleSmall(color: colorText, fontSize: 9.sp, fontWeight: FontWeight.w600),
+                      style: TextStyle(color: Colors.white, fontSize: 9.sp, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ],
@@ -203,4 +218,21 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
       ),
     );
   }
+}
+
+class AppImages {
+  static String logoInApp = "assets/images/logo_in_app.svg";
+  static String menu = "assets/images/menu.svg";
+  static String wave = "assets/images/wave.svg";
+  static String computer = "assets/images/computer.svg";
+  static String conversation = "assets/images/conversation.svg";
+  static String writing = "assets/images/writing.svg";
+  static String practice = "assets/images/practice.png";
+  static String history = "assets/images/history.png";
+  static String boxChat = "assets/images/box_chat.png";
+  static String arrow = "assets/images/arrow.png";
+  static String splash = "assets/images/splash.svg";
+  static String loading = "assets/images/loading.gif";
+  static String video = "assets/images/video.svg";
+  static String praticeTopic = "assets/images/practice_topic.svg";
 }
