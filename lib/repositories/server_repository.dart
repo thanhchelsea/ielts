@@ -1,15 +1,10 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
-import 'package:get/get_connect/http/src/status/http_status.dart';
 import 'package:ielts/base/base_repository.dart';
 import 'package:ielts/utils/client_utils.dart';
 import 'package:logger/logger.dart';
 
 import '../index.dart';
-import 'error_handlers.dart';
-import 'exceptions/index.dart';
 
 class ServerRepository extends BaseRepository {
   ServerRepository._getIntance();
@@ -133,5 +128,38 @@ class ServerRepository extends BaseRepository {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<List<Discussion>> getComment({required int topicId}) async {
+    String endPoint = "${ApiConfig.BASE_URL}/get-comments";
+    var params = {
+      // "sessionId": sessionId,
+      "topicId": topicId,
+      "token": ApiConfig.TOKEN,
+    };
+    var dioCall = dioClient.post(endPoint, queryParameters: params);
+    try {
+      return callApiWithErrorParser(dioCall).then(
+        (response) {
+          Map<String, dynamic> data = response.data;
+          var list = (data['data'] as List).map((e) => Discussion.fromMap(e)).toList();
+          list.sort((a, b) => b.createDate.compareTo(a.createDate));
+          return list;
+        },
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> sendComment({required String ssId, required Discussion data}) async {
+    String endPoint = "${ApiConfig.BASE_URL}/insert-comment";
+    var params = {
+      // "sessionId": sessionId,
+      "sessionId": ssId,
+      "token": ApiConfig.TOKEN,
+    };
+
+    var dioCall = dioClient.post(endPoint, queryParameters: params, data: data.toJson());
   }
 }

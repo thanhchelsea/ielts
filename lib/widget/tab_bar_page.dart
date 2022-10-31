@@ -14,6 +14,7 @@ class TabBarPage extends StatelessWidget {
     this.actionInsert = const [],
     this.onTap,
     this.showDivider = false,
+    this.marginTabbar,
     // required this.currentTab,
   }) : super(key: key);
   List<String> nameTabs;
@@ -23,6 +24,7 @@ class TabBarPage extends StatelessWidget {
   Function? onTap;
   List<Widget> actionInsert;
   bool showDivider;
+  EdgeInsets? marginTabbar;
   // String currentTab;
   @override
   Widget build(BuildContext context) {
@@ -39,28 +41,31 @@ class TabBarPage extends StatelessWidget {
           height: Get.height,
           child: Column(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        ...List.generate(
-                          nameTabs.length,
-                          (index) => TabBarPageWidget(
-                            nameTab: controller.listNameTab[index],
-                            iconData: iconTabs[index],
-                            currentNameTab: controller.currentNameTab.value,
-                            onPressed: (tab) {
-                              if (onTap != null && controller.currentNameTab.value != tab) onTap!(tab);
-                              controller.changeSelectTab(tab);
-                            },
+              Container(
+                padding: marginTabbar,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          ...List.generate(
+                            nameTabs.length,
+                            (index) => TabBarPageWidget(
+                              nameTab: controller.listNameTab[index],
+                              iconData: iconTabs[index],
+                              currentNameTab: controller.currentNameTab.value,
+                              onPressed: (tab) {
+                                if (onTap != null && controller.currentNameTab.value != tab) onTap!(tab);
+                                controller.changeSelectTab(tab);
+                              },
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  ...actionInsert,
-                ],
+                    ...actionInsert,
+                  ],
+                ),
               ),
               showDivider
                   ? Container(

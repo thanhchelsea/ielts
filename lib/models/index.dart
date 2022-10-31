@@ -6,3 +6,4 @@ export 'topic_progress.dart';
 export 'my_card_data.dart';
 export 'video_scenarios.dart';
 export 'document.dart';
+export 'discussion.dart';

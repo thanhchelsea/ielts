@@ -14,9 +14,12 @@ import 'package:subtitle/subtitle.dart' as S;
 import '../sign_in/controller.dart';
 
 class VideoController extends BaseController {
+  //data
   Rxn<Topic> video = Rxn<Topic>();
   Rxn<VideoScenario> videoScenario = Rxn<VideoScenario>();
   RxList<Document> documents = <Document>[].obs;
+  RxList<Discussion> discussion = <Discussion>[].obs;
+  TextEditingController textEditingController = TextEditingController();
   VideoPlayerController? videoPlayerController;
   Rxn<ChewieController> chewieController = Rxn<ChewieController>();
   ServerRepository serverRepo = ServerRepository();
@@ -24,8 +27,10 @@ class VideoController extends BaseController {
   @override
   void onReady() async {
     video.value = LevelSkillController.to.topicChildSelected.value;
+
     await getVideoScenarios();
     await initVideo();
+    await getComment();
     super.onReady();
   }
 
@@ -66,7 +71,7 @@ class VideoController extends BaseController {
       looping: false,
       deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
       subtitle: Subtitles(
-        subtile != null ? [...convertStringToSubTitle(subtile!)] : [],
+        subtile != null ? [...convertStringToSubTitle(subtile)] : [],
       ),
       subtitleBuilder: (context, subtitle) {
         return Padding(
@@ -174,6 +179,41 @@ class VideoController extends BaseController {
       onSuccess: (response) {
         videoScenario.value = response as VideoScenario;
       },
+    );
+  }
+
+//get comment
+  Future getComment() async {
+    var getComment = serverRepo.getComment(topicId: video.value!.id);
+    await callDataService(
+      getComment,
+      onSuccess: (response) {
+        discussion.value = response as List<Discussion>;
+      },
+    );
+  }
+
+  //insert comment
+  Future sendComment() async {
+    String ssId = SignInController.to.getSessionId();
+    Discussion discussion = Discussion.initDicussion(
+      pId: video.value!.id,
+      cId: video.value!.courseId,
+      tId: video.value!.id,
+      uId: SignInController.to.user.value!.id,
+      uName: SignInController.to.user.value!.fullName,
+      ct: textEditingController.text,
+    );
+    print("xxxxx $discussion");
+    var getComment = serverRepo.sendComment(data: discussion, ssId: ssId);
+    await callDataService(
+      getComment,
+      onSuccess: (response) {
+        textEditingController.text = "";
+      },
+      // onComplete: () {
+      //   textEditingController.text = "";
+      // },
     );
   }
 

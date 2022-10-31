@@ -17,21 +17,20 @@ class VideoUI extends BaseView<VideoController> {
   @override
   Widget body(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: padding),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            video(),
-            SizedBox(height: padding10),
-            tabAction(),
-          ],
-        ),
+      // padding: EdgeInsets.symmetric(horizontal: padding),
+      child: Column(
+        children: [
+          video(),
+          SizedBox(height: padding10),
+          Expanded(child: tabAction()),
+        ],
       ),
     );
   }
 
   Widget video() {
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: padding),
       margin: EdgeInsets.only(top: padding),
       height: Get.height / 3.5,
       child: Obx(
@@ -55,10 +54,11 @@ class VideoUI extends BaseView<VideoController> {
       nameTabs: controller.nameTabs,
       iconTabs: [AppIcons.comment, AppIcons.dowload_file],
       id: Get.currentRoute,
-      tabsView: [Expanded(child: Text("comment")), documentWidget()],
+      tabsView: [discussionWidget(), documentWidget()],
       onTap: (tab) {
         controller.changeTab(tab);
       },
+      marginTabbar: EdgeInsets.symmetric(horizontal: padding),
       showDivider: true,
       actionInsert: [
         PrimaryButton(
@@ -84,62 +84,182 @@ class VideoUI extends BaseView<VideoController> {
     );
   }
 
+  Widget discussionWidget() {
+    return Expanded(
+      child: Stack(
+        children: [
+          Obx(
+            () => Container(
+              margin: EdgeInsets.symmetric(horizontal: padding),
+              child: ListView.builder(
+                padding: EdgeInsets.only(top: padding12, bottom: 100),
+                itemCount: controller.discussion.length,
+                itemBuilder: (context, index) {
+                  return DiscussionItem(item: controller.discussion[index]);
+                },
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 0, vertical: halfPadding),
+              decoration: BoxDecoration(
+                color: Get.theme.cardColor,
+              ),
+              width: Get.width,
+              child: Row(
+                children: [
+                  SizedBox(width: padding20),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: padding20, vertical: 0),
+                      decoration: BoxDecoration(
+                        color: Color(0xffF0F2F5),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: TextField(
+                        controller: controller.textEditingController,
+                        decoration: InputDecoration(
+                          hintText: "Type your message here...",
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      print("send comment");
+                      controller.sendComment();
+                    },
+                    icon: const Icon(
+                      AppIcons.send,
+                      color: Color(0xff388CFD),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget documentWidget() {
     return Expanded(
       child: Obx(
-        () => ListView.builder(
-          padding: EdgeInsets.only(top: padding10, bottom: 350.h),
-          shrinkWrap: true,
-          itemCount: controller.documents.length,
-          itemBuilder: (context, index) {
-            print(controller.documents[index].url);
-            return Container(
-              margin: EdgeInsets.only(bottom: padding10),
-              // padding: EdgeInsets.symmetric(horizontal: padding14, vertical: padding14),
-              decoration: BoxDecoration(
-                color: Get.theme.cardColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Container(
-                child: ExpansionTile(
-                  trailing: const Icon(
-                    AppIcons.download,
-                    color: AppColors.colorActive,
-                    size: 20,
+        () => SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: padding),
+            margin: EdgeInsets.only(top: 20),
+            child: Column(
+              children: List.generate(
+                controller.documents.length,
+                (index) => Container(
+                  margin: EdgeInsets.only(bottom: padding10),
+                  // padding: EdgeInsets.symmetric(horizontal: padding14, vertical: padding14),
+                  decoration: BoxDecoration(
+                    color: Get.theme.cardColor,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  title: Row(
-                    children: [
-                      SizedBox(width: padding_2),
-                      const Icon(
-                        AppIcons.document,
+                  child: Container(
+                    child: ExpansionTile(
+                      trailing: const Icon(
+                        AppIcons.download,
+                        color: AppColors.colorActive,
+                        size: 20,
                       ),
-                      SizedBox(width: padding10),
-                      Expanded(
-                        child: Text(
-                          controller.documents[index].title,
-                          style: StyleApp.titleNormal(
-                            fontSize: 14.sp,
+                      title: Row(
+                        children: [
+                          SizedBox(width: padding_2),
+                          const Icon(
+                            AppIcons.document,
                           ),
-                        ),
+                          SizedBox(width: padding10),
+                          Expanded(
+                            child: Text(
+                              controller.documents[index].title,
+                              style: StyleApp.titleNormal(
+                                fontSize: 14.sp,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                      children: <Widget>[
+                        Container(
+                            margin: EdgeInsets.symmetric(horizontal: padding12),
+                            // width: 300,
+                            height: 500.h,
+                            child: SfPdfViewer.network(
+                              controller.documents[index].url,
+                            )
+                            // child: SfPdfViewer.network(controller.documents[index].url),
+                            ),
+                      ],
+                    ),
                   ),
-                  // controlAffinity: ListTileControlAffinity.trailing,
-                  children: <Widget>[
-                    Container(
-                        width: 300,
-                        height: 500,
-                        child: SfPdfViewer.network(
-                          "https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf", //    controller.documents[index].url,
-                        )
-                        // child: SfPdfViewer.network(controller.documents[index].url),
-                        ),
-                  ],
                 ),
               ),
-            );
-          },
+            ),
+          ),
         ),
+        //  ListView.builder(
+        //   controller: ScrollController(),
+        //   padding: EdgeInsets.only(top: padding10, bottom: 350.h),
+        //   // shrinkWrap: true,
+        //   itemCount: controller.documents.length,
+        //   // physics: NeverScrollableScrollPhysics(),
+        //   itemBuilder: (context, index) {
+        //     return Container(
+        //       margin: EdgeInsets.only(bottom: padding10),
+        //       // padding: EdgeInsets.symmetric(horizontal: padding14, vertical: padding14),
+        //       decoration: BoxDecoration(
+        //         color: Get.theme.cardColor,
+        //         borderRadius: BorderRadius.circular(10),
+        //       ),
+        //       child: Container(
+        //         child: ExpansionTile(
+        //           trailing: const Icon(
+        //             AppIcons.download,
+        //             color: AppColors.colorActive,
+        //             size: 20,
+        //           ),
+        //           title: Row(
+        //             children: [
+        //               SizedBox(width: padding_2),
+        //               const Icon(
+        //                 AppIcons.document,
+        //               ),
+        //               SizedBox(width: padding10),
+        //               Expanded(
+        //                 child: Text(
+        //                   controller.documents[index].title,
+        //                   style: StyleApp.titleNormal(
+        //                     fontSize: 14.sp,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ],
+        //           ),
+        //           children: <Widget>[
+        //             Container(
+        //                 margin: EdgeInsets.symmetric(horizontal: padding12),
+        //                 // width: 300,
+        //                 height: 500.h,
+        //                 child: SfPdfViewer.network(
+        //                   controller.documents[index].url,
+        //                 )
+        //                 // child: SfPdfViewer.network(controller.documents[index].url),
+        //                 ),
+        //           ],
+        //         ),
+        //       ),
+        //     );
+        //   },
+        // ),
       ),
     );
   }

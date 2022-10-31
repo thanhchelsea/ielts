@@ -57,12 +57,12 @@ class StyleApp {
 //title
 //title bold
   static TextStyle titleBold({
-    double fontSize = 16,
+    double? fontSize,
     Color? color,
     FontWeight? fontWeight,
   }) {
     return TextStyle(
-      fontSize: fontSize.sp,
+      fontSize: fontSize ?? 16.sp,
       fontWeight: fontWeight ?? FontWeight.w700,
       color: color,
     );

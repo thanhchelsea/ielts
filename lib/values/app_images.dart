@@ -13,4 +13,5 @@ class AppImages {
   static String loading = "assets/images/loading.gif";
   static String video = "assets/images/video.svg";
   static String praticeTopic = "assets/images/practice_topic.svg";
+  static String iconAvatarDefault = "assets/images/default_avatar.svg";
 }

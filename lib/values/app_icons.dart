@@ -40,4 +40,5 @@ class AppIcons {
   static const IconData dowload_file = IconData(0xe810, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData practice = IconData(0xe811, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData delete = IconData(0xe812, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData like = IconData(0xe813, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

@@ -1,4 +1,5 @@
 import 'index.dart';
+import 'package:intl/intl.dart';
 
 class ClientUltis {
   static String convertStatus(int status) {
@@ -56,5 +57,28 @@ class ClientUltis {
     data += '';
     print(":xxxxxx $data");
     return data;
+  }
+
+  static String convertDateComment(int date) {
+    // print("time rb");
+    String time = "";
+    int toDayDate = DateTime.now().millisecondsSinceEpoch;
+    int second = (toDayDate / 1000 - date / 1000).round();
+
+    if (second < 60) {
+      time = "1 " + "minute ago";
+    } else if (second >= 60 && second < 60 * 60) {
+      int minute = second ~/ 60;
+      time = "$minute " + "${minute > 1 ? "minutes ago" : "minute ago"}";
+    } else if (second >= 60 * 60 && second < 24 * 60 * 60) {
+      int hour = second ~/ (60 * 60);
+      int minute = (second % (60 * 60)) ~/ 60;
+      time = "$hour " + "hour ago";
+    } else {
+      DateTime t = DateTime.fromMillisecondsSinceEpoch(date);
+      String formattedDate = DateFormat('dd/MM/yyyy').format(t);
+      time = formattedDate;
+    }
+    return time;
   }
 }

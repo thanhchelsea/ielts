@@ -4,3 +4,4 @@ export 'primary_button.dart';
 export 'primary_input_filed.dart';
 export 'tab_bar_page.dart';
 export 'slider.dart';
+export 'discussion_item.dart';
