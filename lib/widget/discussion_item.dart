@@ -6,20 +6,26 @@ import 'package:ielts/widget/image_cache.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DiscussionItem extends StatelessWidget {
-  DiscussionItem({Key? key, required this.item}) : super(key: key);
+  DiscussionItem({
+    Key? key,
+    required this.item,
+    this.margin,
+  }) : super(key: key);
   Discussion item;
-
+  EdgeInsets? margin;
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: padding12),
+      margin: margin ?? EdgeInsets.only(bottom: padding12, right: extraLargePadding),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ImageCustom(
-            width: 45.w,
-            height: 45.w,
+            width: 42.w,
+            height: 42.w,
             shape: BoxShape.circle,
+            url: item.imageURL,
+            //  "https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/313351409_840327683765737_6856931010520459187_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=dbeb18&_nc_ohc=AM58HrQxfa8AX_KLHq6&tn=KkiZPr2RM8Wgqpge&_nc_ht=scontent.fhan5-8.fna&oh=00_AfCZ7x-wFezP_jTmN0O9tTx53yxiaFZGw9USWntvI8G6zQ&oe=63665A91", //item.imageURL,
           ),
           SizedBox(width: halfPadding),
           Expanded(

@@ -217,6 +217,10 @@ class VideoController extends BaseController {
     );
   }
 
+  void nextTopic() {
+    LevelSkillController.to.selectTopicChild(video.value!, nextTopic: true);
+  }
+
   @override
   void onClose() {
     if (videoPlayerController != null) videoPlayerController!.dispose();

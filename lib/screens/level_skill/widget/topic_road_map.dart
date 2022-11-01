@@ -26,30 +26,27 @@ double paddingRowEvenRatio = 50 / ratio.width;
 double topicItemSizeRatio = 64 / ratio.width;
 double topicItemSize = 92.4.w;
 double paddingScrren = 24.w;
+int rowTopicSpacing = 30;
 
 class _TopicRoadMapState extends State<TopicRoadMap> {
   int rowTopic = 0, currentPart = 0;
   Size size = Get.size;
   @override
   void didChangeDependencies() {
-    // print(topicsController.topics.length);
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CustomPaint(
-          size: size,
-          child: _makeListTopic(widget.topics),
-          painter: Drawline(
-            row: rowTopic,
-            currentPart: currentPart,
-            color: AppColors.colorCardPrimary,
-          ),
-        ),
-      ],
+    return CustomPaint(
+      size: size,
+      child: _makeListTopic(widget.topics),
+      painter: Drawline(
+          row: rowTopic,
+          currentPart: currentPart,
+          color: AppColors.colorCardPrimary,
+          rowPadding: rowTopicSpacing,
+          topicsLength: widget.topics.length),
     );
   }
 
@@ -61,17 +58,10 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
     currentPart = 0;
     int lastChildLock = 0;
     for (int index = 0; index < topics.length; index++) {
-      // if (topics[index].progress.lock == false) {
-      //   lastChildLock = topics[index].id;
-      // }
-      lastChildLock = 3;
-    }
-    for (int index = 0; index < topics.length; index++) {
       Topic topic = topics[index];
-      // if (topic.progress.lock == false) {
-      //   currentPart = index;
-      // }
-      currentPart = index;
+      if ((topic.topicProgress?.progress ?? 0) == 0) {
+        currentPart = index;
+      }
       if (temp % 2 == 0) {
         childs.add(_makeTopicItem(topic, index, topic.id == lastChildLock));
         if (childs.length == 3) {
@@ -84,34 +74,35 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
         }
       } else {
         childs.insert(0, _makeTopicItem(topic, index, topic.id == lastChildLock));
-        if (childs.length == 2) {
+        if (childs.length == 3) {
           List<Widget> cs = [];
           cs.addAll(childs);
-          widget = Padding(
-            padding: EdgeInsets.only(left: size.width * paddingRowEvenRatio, right: size.width * paddingRowEvenRatio),
-            child: _makeTopicsRow(cs),
-          );
+          widget = _makeTopicsRow(cs);
+          // widget = Padding(
+          //   padding: EdgeInsets.only(left: size.width * paddingRowEvenRatio, right: size.width * paddingRowEvenRatio),
+          //   child: _makeTopicsRow(cs),
+          // );
           temp++;
           childs = [];
           widgets.add(widget);
+        } else if (index > 0 && childs.length == 2 && index % 3 == 1 && index == topics.length - 1) {
+          childs.insert(
+              0,
+              Container(
+                width: 102.4,
+                height: 102.4,
+              ));
         }
       }
     }
     if (childs.isNotEmpty) {
-      if (temp % 2 == 0) {
-        widget = _makeTopicsRow(childs);
-        widgets.add(widget);
-      } else {
-        widget = Padding(
-          padding: EdgeInsets.only(left: size.width * paddingRowEvenRatio, right: size.width * paddingRowEvenRatio),
-          child: _makeTopicsRow(childs),
-        );
-        widgets.add(widget);
-      }
+      widget = _makeTopicsRow(childs);
+      widgets.add(widget);
     }
     rowTopic = widgets.length;
     return Padding(
-      padding: EdgeInsets.only(top: 0, left: paddingScrren, bottom: 100, right: paddingScrren),
+      // padding: EdgeInsets.only(top: 0, left: padding, bottom: 100, right: padding),
+      padding: EdgeInsets.only(top: 0, left: padding, bottom: 0, right: padding),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: widgets,
@@ -120,11 +111,14 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
   }
 
   _makeTopicsRow(List<Widget> childs) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      mainAxisSize: MainAxisSize.max,
-      children: childs,
+    return Container(
+      padding: EdgeInsets.only(bottom: rowTopicSpacing.toDouble()),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: childs.length < 3 ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        children: childs,
+      ),
     );
   }
 
@@ -136,8 +130,8 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
       topic: topic,
       topicIndex: index + 1,
       tapToStudy: (Topic topic) {
-        print("tap");
         widget.tapToic(topic);
+        // print("tap");
       },
     );
   }
@@ -147,19 +141,35 @@ class Drawline extends CustomPainter {
   final int row;
   final int currentPart;
   final Color color;
+  int rowPadding;
+  int topicsLength;
   late Paint _paint;
 
-  Drawline({required this.row, required this.currentPart, required this.color}) {
+  Drawline(
+      {required this.row,
+      required this.currentPart,
+      required this.color,
+      this.rowPadding = 30,
+      this.topicsLength = 0}) {
     _paint = new Paint();
     _paint.color = color;
     _paint.style = PaintingStyle.stroke;
     _paint.strokeWidth = 4;
   }
 
-  drawLine(Canvas canvas, double x, double y, Size size, int limit) {
+  drawLine(Canvas canvas, double x, double y, Size size, int limit, int rowPadding, int index, int topicsLength,
+      bool _lastRow) {
+    var _topicLenghs = topicsLength;
+    bool _drawLimitToCenter = (_topicLenghs > 0 && _topicLenghs % 3 == 2);
     var path = Path();
-    path.moveTo(x, y);
-    path.lineTo(x + (size.width - (paddingScrren + topicItemSize / 2) * 2), y);
+    var _newY = y + index * rowPadding;
+    path.moveTo(x, _newY);
+    if (_drawLimitToCenter && _lastRow) {
+      path.moveTo(x + (size.width - 2 * padding) / 3, _newY);
+      path.lineTo(x + (size.width - (padding + topicItemSize / 2) * 2), _newY);
+    } else {
+      path.lineTo(x + (size.width - (padding + topicItemSize / 2) * 2), _newY);
+    }
     canvas.drawPath(
       dashPathWidthLimit(path, dashArray: CircularIntervalList<double>(<double>[5, 10]), limit: limit),
       _paint,
@@ -174,10 +184,33 @@ class Drawline extends CustomPainter {
       path.cubicTo(
           x - topicItemSize * 2 / Math.pi, y, x - topicItemSize * 2 / Math.pi, y + topicItemSize, x, y + topicItemSize);
     } else {
-      x = x + size.width - (paddingScrren + topicItemSize / 2) * 2;
+      x = x + size.width - (padding + topicItemSize / 2) * 2;
       path.moveTo(x, y);
       path.cubicTo(
           topicItemSize * 2 / Math.pi + x, y, topicItemSize * 2 / Math.pi + x, topicItemSize + y, x, y + topicItemSize);
+    }
+    canvas.drawPath(
+      dashPathWidthLimit(
+        path,
+        dashArray: CircularIntervalList<double>(<double>[5, 10]),
+        limit: limit,
+      ),
+      _paint,
+    );
+    path.close();
+  }
+
+  drawVerticalLine(Canvas canvas, double x, double y, Size size, String rotate, int limit, int rowPadding, int index) {
+    // + 2 -2 la de cho góc vuông trông liền mạch
+    var path = Path();
+    y = y + index * rowPadding;
+    if (rotate == 'left') {
+      path.moveTo(x, y - 2);
+      path.lineTo(x, y + topicItemSize + 2 + rowPadding);
+    } else {
+      x = x + size.width - (padding + topicItemSize / 2) * 2;
+      path.moveTo(x, y - 2);
+      path.lineTo(x, y + topicItemSize + 2 + rowPadding);
     }
     canvas.drawPath(
       dashPathWidthLimit(path, dashArray: CircularIntervalList<double>(<double>[5, 10]), limit: limit),
@@ -200,12 +233,13 @@ class Drawline extends CustomPainter {
       index = 0.5;
     }
     int row = (part ~/ 5) * 2 + add;
-    return MyPossition(row: row, index: index);
+    var _position = MyPossition(row: row, index: index);
+    return _position;
   }
 
   @override
   void paint(Canvas canvas, Size size) {
-    double lineLength = size.width - (paddingScrren + topicItemSize / 2) * 2;
+    double lineLength = size.width - (padding + topicItemSize / 2) * 2;
     int maxUnderLine =
         (lineLength / (5 + 10)).round(); // 5 + 10 = CircularIntervalList<double>(<double>[5, 10]), dấu gạch nối
     MyPossition possition = _findPossition(currentPart + 1);
@@ -229,14 +263,19 @@ class Drawline extends CustomPainter {
           limitCircle = 0;
         }
         if (possition.index == 2.0) {
-          limitLine = maxUnderLine * 2;
+          limitLine = maxUnderLine * 2 - 100;
           limitCircle = 0;
         }
       }
-      drawLine(canvas, paddingScrren + topicItemSize / 2, topicItemSize / 2 + topicItemSize * index, size, limitLine);
+      drawLine(canvas, padding + topicItemSize / 2, topicItemSize / 2 + topicItemSize * index, size, limitLine,
+          rowPadding, index, topicsLength, (index + 1 == row));
       if (index < row - 1) {
-        drawHaftCircle(canvas, paddingScrren + topicItemSize / 2, topicItemSize / 2 + topicItemSize * index, size,
-            index % 2 == 0 ? 'right' : 'left', limitCircle);
+        // TODO - ĐÍT CONG
+        // drawHaftCircle(canvas, padding + topicItemSize / 2, topicItemSize / 2 + topicItemSize * index, size,
+        //     index % 2 == 0 ? 'right' : 'left', limitCircle);
+        // TODO - ĐÍT VUÔNG
+        drawVerticalLine(canvas, padding + topicItemSize / 2, topicItemSize / 2 + topicItemSize * index, size,
+            index % 2 == 0 ? 'right' : 'left', limitCircle, rowPadding, index);
       }
     }
   }

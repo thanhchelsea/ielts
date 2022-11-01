@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_polygon/flutter_polygon.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ielts/index.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../index.dart';
 import '../../../models/topic.dart';
 
 class TopicItemNew extends StatefulWidget {
@@ -35,7 +35,9 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
   final Function tapToStudy;
   double scale = 1.6;
   late AnimationController _animation;
-
+  double padding12 = 12.h;
+  double padding_4 = 4.h;
+  double padding10 = 10.h;
   TopicItemNewState(
       {required this.size,
       required this.color,
@@ -88,6 +90,7 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
                 _buildContainer((size / scale) * 1.4 * _animation.value, true),
                 _buildContainer((size / scale) * 1.6 * _animation.value, true),
                 _buildContainer((size / scale), false),
+                _makeTopicIndex(),
                 _makeTopicTitle(),
               ],
             );
@@ -95,6 +98,12 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
         ),
       );
     }
+    // return Container(
+    //   color: Colors.green,
+    //   width: size,
+    //   height: size,
+    //   child: Text(topic.name),
+    // );
     return Container(
       // color: Colors.green,
       width: size,
@@ -106,10 +115,25 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
           Stack(
             clipBehavior: Clip.none,
             children: [
+              _makeTopicIndex(),
               Positioned(
-                top: 10.h,
-                right: -16.w,
-                child: _makeTopicTitle(),
+                top: 10,
+                right: -16,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: padding12, vertical: 7.h),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    "${topic.name}",
+                    style: TextStyle(
+                      fontSize: 9.sp,
+                      color: AppColors.colorActive,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
               ),
             ],
           )
@@ -118,26 +142,22 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
     );
   }
 
+  Widget _makeTopicIndex() {
+    if (topic.topicProgress?.progress == 100) {
+      return Center(child: null);
+    }
+    // if (topic.progress.lock == true) {
+    return Container();
+    // return Center(
+    //     child: Text(
+    //   "${topic.getPercentComplete()}%",
+    //   style: TextStyle(color: Colors.white, fontFamily: "Rubik", fontWeight: FontWeight.w500, fontSize: 16),
+    // ));
+  }
+
   Widget _makeTopicTitle() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: padding12, vertical: 7.h),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20), boxShadow: [
-        BoxShadow(
-          blurRadius: 10,
-          offset: Offset(0, 4),
-          spreadRadius: 0,
-          color: AppColors.shadowColor,
-        )
-      ]),
-      child: Text(
-        "${topic.name}",
-        style: StyleApp.titleSmall(
-          fontSize: 9.sp,
-          color: AppColors.colorActive,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
-    );
+    return Text("${topic.name}dd",
+        style: TextStyle(color: Color(0xFF0C1127), fontSize: 14, fontWeight: FontWeight.w600, fontFamily: "Nutino"));
   }
 
   Widget _buildContainer(double radius, bool opacity) {
@@ -148,7 +168,7 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
       Color(0xff3F7BDD),
       Color(0xff88B9FF),
     ];
-    if (topic.topicProgress?.progress == 100) {
+    if (topic.topicProgress?.progress == 0) {
       colorText = AppColors.colorInActive;
       colorOutside = Colors.white;
       colors = [

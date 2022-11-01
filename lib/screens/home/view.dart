@@ -173,10 +173,7 @@ class HomeUi extends BaseView<HomeController> {
     );
   }
 
-  Widget skillIelts(
-      {required String nameSkill,
-      required String imagePath,
-      required Function onPress}) {
+  Widget skillIelts({required String nameSkill, required String imagePath, required Function onPress}) {
     double borderRadius = 25;
     return GestureDetector(
       onTap: () {
@@ -236,7 +233,7 @@ class HomeUi extends BaseView<HomeController> {
                         ),
                         child: Icon(
                           Icons.navigate_next,
-                          size: 22.sp,
+                          size: 22,
                           color: Color(0xff396BBD),
                         ),
                       ),
@@ -305,8 +302,7 @@ class HomeUi extends BaseView<HomeController> {
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: padding10, vertical: padding12),
+              padding: EdgeInsets.symmetric(horizontal: padding10, vertical: padding12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(borderRadius),
                 color: AppColors.colorBoldCardPrimary,
@@ -330,8 +326,7 @@ class HomeUi extends BaseView<HomeController> {
                   "Pratice now to unlock the next level",
                   style: StyleApp.titleExtraSmall(
                     fontWeight: FontWeight.w400,
-                    color:
-                        Get.theme.textTheme.bodyText1!.color!.withOpacity(0.8),
+                    color: Get.theme.textTheme.bodyText1!.color!.withOpacity(0.8),
                   ),
                 ),
               ],

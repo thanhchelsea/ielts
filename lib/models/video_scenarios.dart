@@ -48,13 +48,14 @@ class VideoScenario {
 
   String? getUrlSubTitle() {
     String? url;
-    List<dynamic> data = jsonDecode(timeQuestionData);
-    Map<String, dynamic> map = Map<String, dynamic>.from(data[0] as Map<String, dynamic>); // jsonDecode(data[0]);
-    Map<String, dynamic> mapDatas =
-        Map<String, dynamic>.from(jsonDecode(map['datas']) as Map<String, dynamic>); // jsonDecode(data[0]);
-    url = mapDatas.values.first;
-    print("subtile video: $url");
-
+    if (timeQuestionData.isNotEmpty) {
+      List<dynamic> data = jsonDecode(timeQuestionData);
+      Map<String, dynamic> map = Map<String, dynamic>.from(data[0] as Map<String, dynamic>); // jsonDecode(data[0]);
+      Map<String, dynamic> mapDatas =
+          Map<String, dynamic>.from(jsonDecode(map['datas']) as Map<String, dynamic>); // jsonDecode(data[0]);
+      url = mapDatas.values.first;
+      print("subtile video: $url");
+    }
     return url;
   }
 

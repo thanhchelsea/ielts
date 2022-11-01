@@ -46,17 +46,34 @@ class LevelSkillController extends BaseController {
     if (topicChilds[t.id] != null && topicChilds[t.id]!.isEmpty) loadTopicByParent(parentId: t.id);
   }
 
-  void selectTopicChild(Topic t) {
+  void selectTopicChild(
+    Topic t, {
+    bool nextTopic = false,
+  }) {
+    print(t.id);
     topicChildSelected.value = t;
-    switch (t.type) {
+    if (nextTopic) {
+      //next topic in video
+      int index = 0;
+      topicChilds.forEach((key, value) {
+        if (t.parentId == key) {
+          index = value.indexWhere((element) => element.id == t.id);
+          if (index >= 0 && index < value.length) {
+            topicChildSelected.value = value[index + 1];
+          }
+          return;
+        }
+      });
+    }
+    switch (topicChildSelected.value!.type) {
       case Configs.TOPIC_TYPE_LESSON:
         {
-          Get.toNamed(RouterNames.VIDEO);
+          !nextTopic ? Get.toNamed(RouterNames.VIDEO) : Get.offNamed(RouterNames.VIDEO);
           return;
         }
       case Configs.TOPIC_TYPE_TEST:
         {
-          Get.toNamed(RouterNames.SPEAKING);
+          !nextTopic ? Get.toNamed(RouterNames.SPEAKING) : Get.offNamed(RouterNames.SPEAKING);
           return;
         }
     }

@@ -20,7 +20,9 @@ class VideoUI extends BaseView<VideoController> {
       // padding: EdgeInsets.symmetric(horizontal: padding),
       child: Column(
         children: [
-          video(),
+          Container(
+            child: video(),
+          ),
           SizedBox(height: padding10),
           Expanded(child: tabAction()),
         ],
@@ -37,9 +39,12 @@ class VideoUI extends BaseView<VideoController> {
         () {
           if (controller.chewieController.value != null && controller.videoPlayerController != null) {
             return ClipRRect(
-              borderRadius: BorderRadius.circular(15.r),
-              child: Chewie(
-                controller: controller.chewieController.value!,
+              borderRadius: BorderRadius.circular(15),
+              child: Container(
+                color: Colors.black,
+                child: Chewie(
+                  controller: controller.chewieController.value!,
+                ),
               ),
             );
           }
@@ -67,7 +72,9 @@ class VideoUI extends BaseView<VideoController> {
           labelText: "Next",
           fontWeight: FontWeight.w800,
           padding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-          onPressed: () {},
+          onPressed: () {
+            controller.nextTopic();
+          },
           showShadow: true,
           titleWidget: Container(
             padding: EdgeInsets.only(top: 7.h, bottom: 7.h, left: padding12, right: halfPadding),
@@ -92,6 +99,8 @@ class VideoUI extends BaseView<VideoController> {
             () => Container(
               margin: EdgeInsets.symmetric(horizontal: padding),
               child: ListView.builder(
+                // shrinkWrap: true,
+                reverse: true,
                 padding: EdgeInsets.only(top: padding12, bottom: 100),
                 itemCount: controller.discussion.length,
                 itemBuilder: (context, index) {
