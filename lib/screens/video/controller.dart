@@ -29,7 +29,7 @@ class VideoController extends BaseController {
     video.value = LevelSkillController.to.topicChildSelected.value;
 
     await getVideoScenarios();
-    await initVideo();
+    initVideo();
     await getComment();
     super.onReady();
   }
@@ -204,16 +204,27 @@ class VideoController extends BaseController {
       uName: SignInController.to.user.value!.fullName,
       ct: textEditingController.text,
     );
-    print("xxxxx $discussion");
     var getComment = serverRepo.sendComment(data: discussion, ssId: ssId);
     await callDataService(
       getComment,
       onSuccess: (response) {
         textEditingController.text = "";
       },
-      // onComplete: () {
-      //   textEditingController.text = "";
-      // },
+    );
+  }
+
+  Future likeOrDislikeComment(Discussion d) async {
+    String ssId = SignInController.to.getSessionId();
+    String userId = SignInController.to.user.value!.id;
+    if (d.like.contains(userId)) {
+      d.like.remove(userId);
+    } else {
+      d.like.add(userId);
+    }
+    var action = serverRepo.sendComment(data: d, ssId: ssId, update: true);
+    await callDataService(
+      action,
+      onSuccess: (response) {},
     );
   }
 

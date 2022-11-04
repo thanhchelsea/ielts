@@ -22,12 +22,12 @@ class DioProvider {
 
   static const int _maxLineWidth = 90;
   static final _prettyDioLogger = PrettyDioLogger(
-    requestHeader: true,
-    requestBody: true,
-    responseBody: true,
-    responseHeader: true,
-    error: true,
-    compact: true,
+    requestHeader: false,
+    requestBody: false,
+    responseBody: false,
+    responseHeader: false,
+    error: false,
+    compact: false,
     maxWidth: _maxLineWidth,
   );
 

@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'index.dart';
 import 'package:intl/intl.dart';
 
@@ -80,5 +83,48 @@ class ClientUltis {
       time = formattedDate;
     }
     return time;
+  }
+
+  static bool compareTo({required String text1, required String text2}) {
+    return text1
+                .toLowerCase()
+                .replaceAll(RegExp('[^A-Za-z0-9]'), '')
+                .compareTo(text2.toLowerCase().replaceAll(RegExp('[^A-Za-z0-9]'), '')) <
+            0
+        ? false
+        : true;
+  }
+
+  static Future<List<FileSystemEntity>> dirContents(Directory dir) {
+    var files = <FileSystemEntity>[];
+    var completer = Completer<List<FileSystemEntity>>();
+    var lister = dir.list(recursive: false);
+    lister.listen((file) => files.add(file),
+        // should also register onError
+        onDone: () => completer.complete(files));
+    return completer.future;
+  }
+
+  static String getFileName(String path) {
+    return path.split("/").last;
+  }
+
+  static String getTimeCreteFile(String path) {
+    final stat = FileStat.statSync(path);
+    DateFormat("hh:mm");
+    Duration diff = getStartDate(DateTime.now()).difference(getStartDate(stat.accessed));
+
+    String createDate = "";
+    if (diff.inHours < 24) {
+      createDate = "Today at ${DateFormat("HH:mm").format(stat.accessed)}";
+    } else {
+      createDate = DateFormat('yyyy-MM-dd HH:mm').format(stat.accessed);
+    }
+    return createDate;
+  }
+
+  static DateTime getStartDate(DateTime time) {
+    DateTime date = DateTime(time.year, time.month, time.day);
+    return date;
   }
 }

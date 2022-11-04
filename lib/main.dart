@@ -18,8 +18,8 @@ void main() async {
     ),
     orientation: Orientation.portrait,
   );
-  ScreenUtil().setWidth(428);
-  ScreenUtil().setHeight(926);
+  ScreenUtil().setWidth(Get.width);
+  ScreenUtil().setHeight(Get.height);
   SystemChrome.setPreferredOrientations(
     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
   ).then((_) async {

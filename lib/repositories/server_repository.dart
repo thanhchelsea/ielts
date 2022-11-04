@@ -152,14 +152,19 @@ class ServerRepository extends BaseRepository {
     }
   }
 
-  Future<void> sendComment({required String ssId, required Discussion data}) async {
+  Future<void> sendComment({required String ssId, required Discussion data, bool update = false}) async {
     String endPoint = "${ApiConfig.BASE_URL}/insert-comment";
     var params = {
-      // "sessionId": sessionId,
       "sessionId": ssId,
       "token": ApiConfig.TOKEN,
     };
-
-    var dioCall = dioClient.post(endPoint, queryParameters: params, data: data.toJson());
+    print(data.toJson());
+    var dioCall = dioClient.post(
+      endPoint,
+      queryParameters: params,
+      data: jsonEncode(
+        !update ? data.toMapSendComment() : data.toJson(),
+      ),
+    );
   }
 }

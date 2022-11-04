@@ -1,68 +1,26 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ielts/utils/client_utils.dart';
+import 'package:path/path.dart';
 import 'package:ielts/base/index.dart';
 import 'package:ielts/index.dart';
+import 'package:ielts/screens/speaking/text_to_speach_controller.dart';
+import 'package:ielts/services/index.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SpeakingController extends BaseController {
   GlobalKey globalKeyListen = GlobalKey();
-
-  String data = """Only you know how I feel
-Only you know what I miss
-Can you see you're just what I need?
-After all that we've been through
-After all I've done for you
-You should know my love is for real
-
-Am I asking for too much?
-Am I lwaiting for too long?
-All I need is your tender touch
-Don't you know I'm on my knees
-Don't you know I'm begging please
-Won't you take a look at me now?
-Only you know how I feel
-Only you know what I miss
-After all that we've been through
-After all I've done for you
-You should know my love is for real
-
-Am I asking for too much?
-Am I lwaiting for too long?
-All I need is your tender touch
-Don't you know I'm on my knees
-Don't you know I'm begging please
-Won't you take a look at me now?
-Only you know how I feel
-Only you know what I miss
-Am I asking for too much?
-Am I lwaiting for too long?
-All I need is your tender touch
-Don't you know I'm on my knees
-Don't you know I'm begging please
-Won't you take a look at me now?
-Only you know how I feel
-Only you know what I miss
-
-Am I asking for too much?
-Am I lwaiting for too long?
-All I need is your tender touch
-Don't you know I'm on my knees
-Don't you know I'm begging please
-Won't you take a look at me now?
-Only you know how I feel
-Only you know what I miss
-Am I asking for too much?
-Am I lwaiting for too long?
-All I need is your tender touch
-Don't you know I'm on my knees
-Don't you know I'm begging please
-Won't you take a look at me now?
-Only you know how I feel
-Only you know what I miss""";
+  Rxn<Topic> topic = Rxn<Topic>();
+  // RxBool audioReading = false.obs;
+  LevelSkillController levelSkillCtrl = Get.find();
   List<TargetFocus> listTargets = [];
+  RxList<FileSystemEntity> recordeds = <FileSystemEntity>[].obs;
   late TutorialCoachMark tutorialCoachMark;
-
+  var appRecorder = AppRecorder().obs;
   void initTargets() {
     listTargets.add(
       TargetFocus(
@@ -140,11 +98,55 @@ Only you know what I miss""";
 
   @override
   void onReady() async {
-    if (Get.context == null) print("dmdmmd");
+    topic.value = levelSkillCtrl.topicChildSelected.value;
+    appRecorder.value = new AppRecorder();
+    appRecorder.value.startIt();
+
     await Future.delayed(
       Duration(milliseconds: 500),
       () => tutorialCoachMark.show(context: Get.overlayContext!, rootOverlay: true),
     );
+    await getRecords();
+    dataSubList.value = stringToListString();
     super.onReady();
   }
+
+  void textToSpeakData() async {
+    var sTTCtrl = Get.find<TextToSpeakController>();
+    await sTTCtrl.speak(data);
+  }
+
+  RxList<String> dataSubList = <String>[].obs;
+  List<String> stringToListString() {
+    List<String> s = [];
+    s = data.replaceAll(RegExp('\\n'), ' ').split(" ");
+
+    return s;
+  }
+
+//recorder
+
+  Future startRecord() async {
+    FileSystemEntity? r = await appRecorder.value.startRecord(folderName: topic.value!.id.toString());
+    if (r != null) recordeds.add(r);
+
+    appRecorder.refresh();
+  }
+
+  Future getRecords() async {
+    var tempDir = await getApplicationDocumentsDirectory();
+    String path = join(
+      tempDir.path,
+      topic.value!.id.toString(),
+    ); //'${tempDir.path}/$folderName/$nameFile.aac';
+
+    recordeds.value = await ClientUltis.dirContents(Directory(path));
+    recordeds.forEach((element) {
+      print("data: ${element.path.split("/").last}");
+    });
+  }
+
+  String data = """How World War One changed United States Society?
+Early 1900s was a time of great changes in the United States. At the time, United States was considered the world leader because the country was changing rapidly. This was the progressive era when United States became highly industrialized.
+""";
 }

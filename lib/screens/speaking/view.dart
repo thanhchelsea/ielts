@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ielts/base/index.dart';
 import 'package:ielts/index.dart';
+import 'package:ielts/screens/speaking/text_to_speach_controller.dart';
+import 'package:ielts/screens/speaking/widget/button_record.dart';
+import 'package:ielts/utils/client_utils.dart';
 import 'package:ielts/widget/custom_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:ui' as ui;
@@ -31,6 +34,7 @@ class SpeakingUI extends BaseView<SpeakingController> {
                     iconTabs: [AppIcons.practice, AppIcons.history],
                     id: Get.currentRoute,
                     tabsView: [practiceView(), Text("document")],
+                    marginTabbar: EdgeInsets.only(bottom: padding_6),
                   ),
                 ),
               ),
@@ -46,15 +50,90 @@ class SpeakingUI extends BaseView<SpeakingController> {
     return Expanded(
       child: SingleChildScrollView(
         child: Container(
-          width: double.infinity,
-          margin: EdgeInsets.symmetric(horizontal: padding),
-          padding: EdgeInsets.symmetric(horizontal: padding, vertical: padding),
-          decoration: BoxDecoration(
-            color: Get.theme.cardColor,
-            borderRadius: BorderRadius.circular(15),
+          margin: EdgeInsets.only(
+            bottom: 200.h,
+            left: padding,
+            right: padding,
           ),
-          child: Text(
-            controller.data,
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: padding, vertical: padding),
+                decoration: BoxDecoration(
+                  color: Get.theme.cardColor,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Obx(
+                  () => RichText(
+                    text: TextSpan(
+                      children: List.generate(
+                        controller.dataSubList.length,
+                        (index) {
+                          TextToSpeakController ttsCtrl = Get.find<TextToSpeakController>();
+                          Color color = Colors.black;
+                          // if (ttsCtrl.readed.isNotEmpty) {
+                          //   if (index == ttsCtrl.readed.length - 1) {
+                          //     print("${ttsCtrl.readed[index]} __ ${controller.dataSubList.value[index]}");
+                          //     if (ClientUltis.compareTo(
+                          //         text1: controller.dataSubList.value[index], text2: ttsCtrl.readed[index])) {
+                          //       color = AppColors.colorPrimaryApp2;
+                          //     }
+                          //   }
+                          // }
+                          if (index < ttsCtrl.readed.length) {
+                            if (ttsCtrl.readed.contains(
+                              controller.dataSubList[index]
+                                  .replaceAll(RegExp('\\n'), ' ')
+                                  .replaceAll(RegExp('[^A-Za-z0-9]'), '')
+                                  .toLowerCase(),
+                            )) {
+                              color = AppColors.colorPrimaryApp2;
+                            } else {}
+                          }
+                          return TextSpan(
+                            text: controller.dataSubList.value[index] + " ",
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: color,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Obx(
+                () => controller.recordeds.value.isNotEmpty
+                    ? Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(top: padding20),
+                              child: Text(
+                                "Voice Memos",
+                                style: StyleApp.titleBold(fontSize: 14.sp),
+                              ),
+                            ),
+                            SizedBox(height: padding_6),
+                            ListView(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              children: List.generate(
+                                controller.recordeds.length,
+                                (index) => Container(
+                                    margin: EdgeInsets.only(bottom: padding12),
+                                    child: RecordWidget(file: controller.recordeds[index])),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container(),
+              )
+            ],
           ),
         ),
       ),
@@ -71,9 +150,6 @@ class SpeakingUI extends BaseView<SpeakingController> {
           end: Alignment.bottomCenter,
           colors: <Color>[
             Colors.white.withOpacity(0.0),
-            // Colors.white.withOpacity(0.6),
-            // Colors.white.withOpacity(0.8),
-            // Colors.white.withOpacity(0.8),
             Colors.white,
             Colors.white,
             Colors.white,
@@ -83,7 +159,6 @@ class SpeakingUI extends BaseView<SpeakingController> {
         ),
       ),
       width: Get.width,
-      // color: Colors.red,
       child: Column(
         children: [
           SizedBox(height: 20.h),
@@ -105,10 +180,15 @@ class SpeakingUI extends BaseView<SpeakingController> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                child: itemBottomTab(
-                  name: "Listen",
-                  icon: AppIcons.listen,
-                  onTap: () {},
+                child: Obx(
+                  () => itemBottomTab(
+                    name: "Listen",
+                    icon: AppIcons.listen,
+                    onTap: () {
+                      controller.textToSpeakData();
+                    },
+                    isActive: Get.find<TextToSpeakController>().state == STATESTT.PLAYING,
+                  ),
                 ),
               ),
               itemBottomTab(
@@ -116,27 +196,13 @@ class SpeakingUI extends BaseView<SpeakingController> {
                 icon: AppIcons.sound,
                 onTap: () {},
               ),
-              Container(
-                padding: EdgeInsets.all(padding10),
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xffFFE4DE),
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(padding10),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: AlignmentDirectional.bottomCenter,
-                      colors: [Color(0xffFF8E4F), Color(0xffFF3636)],
-                    ),
-                  ),
-                  child: const Icon(
-                    AppIcons.mic,
-                    size: 40,
-                    color: Colors.white,
-                  ),
+              Obx(
+                () => MicroComponent(
+                  onTap: () {
+                    print("record press");
+                    controller.startRecord();
+                  },
+                  recording: controller.appRecorder.value.isRecording,
                 ),
               ),
               itemBottomTab(
@@ -162,25 +228,30 @@ class SpeakingUI extends BaseView<SpeakingController> {
     required Function onTap,
     bool isActive = false,
   }) {
-    return Column(
-      children: [
-        Container(
-          key: name == "Listen" ? controller.globalKeyListen : null,
-          child: Icon(
-            icon,
-            size: 22,
-            color: !isActive ? AppColors.colorInActive : AppColors.colorActive,
+    return InkWell(
+      onTap: () {
+        onTap();
+      },
+      child: Column(
+        children: [
+          Container(
+            key: name == "Listen" ? controller.globalKeyListen : null,
+            child: Icon(
+              icon,
+              size: 22,
+              color: !isActive ? AppColors.colorInActive : AppColors.colorActive,
+            ),
           ),
-        ),
-        SizedBox(height: padding10),
-        Text(
-          name,
-          style: StyleApp.titleSmall(
-            fontSize: 12.sp,
-            color: !isActive ? AppColors.colorInActive : AppColors.colorActive,
-          ),
-        )
-      ],
+          SizedBox(height: padding10),
+          Text(
+            name,
+            style: StyleApp.titleSmall(
+              fontSize: 12.sp,
+              color: !isActive ? AppColors.colorInActive : AppColors.colorActive,
+            ),
+          )
+        ],
+      ),
     );
   }
 }

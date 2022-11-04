@@ -104,7 +104,12 @@ class VideoUI extends BaseView<VideoController> {
                 padding: EdgeInsets.only(top: padding12, bottom: 100),
                 itemCount: controller.discussion.length,
                 itemBuilder: (context, index) {
-                  return DiscussionItem(item: controller.discussion[index]);
+                  return DiscussionItem(
+                    item: controller.discussion[index],
+                    onTapLike: () {
+                      controller.likeOrDislikeComment(controller.discussion[index]);
+                    },
+                  );
                 },
               ),
             ),

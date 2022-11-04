@@ -131,7 +131,7 @@ class Discussion {
 
   Map<String, dynamic> toMap() {
     return {
-      // 'id': id,
+      'id': id,
       'parentId': parentId,
       'parentCardId': parentCardId,
       'userId': userId,
@@ -153,6 +153,31 @@ class Discussion {
       'timeReplyComment': timeReplyComment,
       'fullName': fullName,
     };
+  }
+
+  Map<String, dynamic> toMapSendComment() {
+    if (id <= 0) {
+      return {
+        'parentId': parentId,
+        'userId': userId,
+        'courseId': courseId,
+        'topicId': topicId,
+        'userName': userName,
+        'content': content,
+        'like': like,
+      };
+    } else {
+      return {
+        'id': id,
+        'parentId': parentId,
+        'userId': userId,
+        'courseId': courseId,
+        'topicId': topicId,
+        'userName': userName,
+        'content': content,
+        'like': like,
+      };
+    }
   }
 
   factory Discussion.fromMap(Map<String, dynamic> map) {
