@@ -14,6 +14,9 @@ class SpeakingUI extends BaseView<SpeakingController> {
   PreferredSizeWidget? appBar(BuildContext context) {
     return CustomAppBar(
       appBarTitleText: "Speaking",
+      onBack: () {
+        controller.backScreenPrevious();
+      },
     );
   }
 
@@ -28,7 +31,8 @@ class SpeakingUI extends BaseView<SpeakingController> {
             children: [
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: padding, vertical: halfPadding),
+                  margin: EdgeInsets.symmetric(
+                      horizontal: padding, vertical: halfPadding),
                   child: TabBarPage(
                     nameTabs: ["Practice", "History"],
                     iconTabs: [AppIcons.practice, AppIcons.history],
@@ -59,7 +63,8 @@ class SpeakingUI extends BaseView<SpeakingController> {
             children: [
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: padding, vertical: padding),
+                padding: EdgeInsets.symmetric(
+                    horizontal: padding, vertical: padding),
                 decoration: BoxDecoration(
                   color: Get.theme.cardColor,
                   borderRadius: BorderRadius.circular(15),
@@ -70,7 +75,8 @@ class SpeakingUI extends BaseView<SpeakingController> {
                       children: List.generate(
                         controller.dataSubList.length,
                         (index) {
-                          TextToSpeakController ttsCtrl = Get.find<TextToSpeakController>();
+                          TextToSpeakController ttsCtrl =
+                              Get.find<TextToSpeakController>();
                           Color color = Colors.black;
                           // if (ttsCtrl.readed.isNotEmpty) {
                           //   if (index == ttsCtrl.readed.length - 1) {
@@ -81,7 +87,9 @@ class SpeakingUI extends BaseView<SpeakingController> {
                           //     }
                           //   }
                           // }
-                          if (index < ttsCtrl.readed.length) {
+                          if (index < ttsCtrl.readed.length &&
+                              Get.find<TextToSpeakController>().state ==
+                                  STATESTT.PLAYING) {
                             if (ttsCtrl.readed.contains(
                               controller.dataSubList[index]
                                   .replaceAll(RegExp('\\n'), ' ')
@@ -124,8 +132,15 @@ class SpeakingUI extends BaseView<SpeakingController> {
                               children: List.generate(
                                 controller.recordeds.length,
                                 (index) => Container(
-                                    margin: EdgeInsets.only(bottom: padding12),
-                                    child: RecordWidget(file: controller.recordeds[index])),
+                                  margin: EdgeInsets.only(bottom: padding12),
+                                  child: RecordWidget(
+                                    file: controller.recordeds[index],
+                                    onTapMore: () {
+                                      controller.onTapMoreOfFile(
+                                          controller.recordeds[index]);
+                                    },
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -142,7 +157,8 @@ class SpeakingUI extends BaseView<SpeakingController> {
 
   Widget bottomTab() {
     return Container(
-      padding: EdgeInsets.only(left: padding, right: padding, bottom: 24.h, top: extraLargePadding),
+      padding: EdgeInsets.only(
+          left: padding, right: padding, bottom: 24.h, top: extraLargePadding),
       decoration: BoxDecoration(
         color: Get.theme.cardColor,
         gradient: LinearGradient(
@@ -162,18 +178,49 @@ class SpeakingUI extends BaseView<SpeakingController> {
       child: Column(
         children: [
           SizedBox(height: 20.h),
-          SliderAudio(
-            progress: const Duration(seconds: 30),
-            total: const Duration(seconds: 100),
-            width: 300.w,
-            widgetAction: InkWell(
-              onTap: () {},
-              child: const Icon(
-                Icons.pause_circle_outline,
-                color: AppColors.colorActive,
-              ),
-            ),
+          Obx(
+            () => Get.find<TextToSpeakController>().state == STATESTT.PLAYING
+                ? SliderAudio(
+                    progress: const Duration(seconds: 30),
+                    total: const Duration(seconds: 100),
+                    width: 300.w,
+                    widgetAction: InkWell(
+                      onTap: () {},
+                      child: const Icon(
+                        Icons.pause_circle_outline,
+                        color: AppColors.colorActive,
+                      ),
+                    ),
+                  )
+                : Container(),
           ),
+          SizedBox(height: 16.h),
+          Obx(() {
+            if (controller.appRecorder.value.isRecording) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: controller.appRecorder.value.isPasue
+                          ? Colors.black
+                          : Color(0xffFF3F39),
+                    ),
+                  ),
+                  SizedBox(width: padding_6),
+                  Text(
+                    "${ClientUltis.getTimeAudio(controller.durationCurrentRecord.value, hasHour: false)}/${ClientUltis.getTimeAudio(Configs.maxRecordDuation, hasHour: false)}",
+                    style: StyleApp.titleSmall(
+                        color: AppColors.colorActive, fontSize: 12.sp),
+                  ),
+                ],
+              );
+            }
+            return Container();
+          }),
           SizedBox(height: 16.h),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -187,7 +234,8 @@ class SpeakingUI extends BaseView<SpeakingController> {
                     onTap: () {
                       controller.textToSpeakData();
                     },
-                    isActive: Get.find<TextToSpeakController>().state == STATESTT.PLAYING,
+                    isActive: Get.find<TextToSpeakController>().state ==
+                        STATESTT.PLAYING,
                   ),
                 ),
               ),
@@ -199,21 +247,34 @@ class SpeakingUI extends BaseView<SpeakingController> {
               Obx(
                 () => MicroComponent(
                   onTap: () {
-                    print("record press");
                     controller.startRecord();
                   },
                   recording: controller.appRecorder.value.isRecording,
                 ),
               ),
-              itemBottomTab(
-                name: "Record",
-                icon: AppIcons.record,
-                onTap: () {},
+              Obx(
+                () => itemBottomTab(
+                  name: "Record",
+                  icon: AppIcons.record,
+                  onTap: () {
+                    controller.reRecord();
+                  },
+                  color: !controller.appRecorder.value.isRecording
+                      ? AppColors.colorInActive.withOpacity(0.4)
+                      : null,
+                ),
               ),
-              itemBottomTab(
-                name: "Finish",
-                icon: AppIcons.finsh,
-                onTap: () {},
+              Obx(
+                () => itemBottomTab(
+                  name: "Finish",
+                  icon: AppIcons.finsh,
+                  onTap: () {
+                    controller.finishRecord();
+                  },
+                  color: !controller.appRecorder.value.isRecording
+                      ? AppColors.colorInActive.withOpacity(0.4)
+                      : null,
+                ),
               ),
             ],
           ),
@@ -227,6 +288,7 @@ class SpeakingUI extends BaseView<SpeakingController> {
     required IconData icon,
     required Function onTap,
     bool isActive = false,
+    Color? color,
   }) {
     return InkWell(
       onTap: () {
@@ -239,7 +301,9 @@ class SpeakingUI extends BaseView<SpeakingController> {
             child: Icon(
               icon,
               size: 22,
-              color: !isActive ? AppColors.colorInActive : AppColors.colorActive,
+              color: !isActive
+                  ? color ?? AppColors.colorInActive
+                  : AppColors.colorActive,
             ),
           ),
           SizedBox(height: padding10),
@@ -247,7 +311,9 @@ class SpeakingUI extends BaseView<SpeakingController> {
             name,
             style: StyleApp.titleSmall(
               fontSize: 12.sp,
-              color: !isActive ? AppColors.colorInActive : AppColors.colorActive,
+              color: !isActive
+                  ? color ?? AppColors.colorInActive
+                  : AppColors.colorActive,
             ),
           )
         ],

@@ -13,6 +13,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
   final bool showBackScreen;
   final double elevation;
   final Color? backgroundColor;
+  final Function? onBack;
   CustomAppBar({
     Key? key,
     this.appBarTitleText,
@@ -21,6 +22,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
     this.showBackScreen = true,
     this.elevation = 5,
     this.backgroundColor,
+    this.onBack,
   }) : super(key: key);
 
   @override
@@ -44,7 +46,10 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
                 ? IconButton(
                     padding: EdgeInsets.all(0),
                     onPressed: () {
-                      Get.back();
+                      if (onBack != null)
+                        onBack!();
+                      else
+                        Get.back();
                     },
                     icon: const Icon(
                       Icons.navigate_before,

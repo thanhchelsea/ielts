@@ -86,10 +86,8 @@ class ClientUltis {
   }
 
   static bool compareTo({required String text1, required String text2}) {
-    return text1
-                .toLowerCase()
-                .replaceAll(RegExp('[^A-Za-z0-9]'), '')
-                .compareTo(text2.toLowerCase().replaceAll(RegExp('[^A-Za-z0-9]'), '')) <
+    return text1.toLowerCase().replaceAll(RegExp('[^A-Za-z0-9]'), '').compareTo(
+                text2.toLowerCase().replaceAll(RegExp('[^A-Za-z0-9]'), '')) <
             0
         ? false
         : true;
@@ -112,7 +110,8 @@ class ClientUltis {
   static String getTimeCreteFile(String path) {
     final stat = FileStat.statSync(path);
     DateFormat("hh:mm");
-    Duration diff = getStartDate(DateTime.now()).difference(getStartDate(stat.accessed));
+    Duration diff =
+        getStartDate(DateTime.now()).difference(getStartDate(stat.accessed));
 
     String createDate = "";
     if (diff.inHours < 24) {
@@ -126,5 +125,18 @@ class ClientUltis {
   static DateTime getStartDate(DateTime time) {
     DateTime date = DateTime(time.year, time.month, time.day);
     return date;
+  }
+
+  static String getTimeAudio(Duration duration, {bool hasHour = true}) {
+    if (hasHour) {
+      return "${duration.inHours.remainder(24).toString().padLeft(2, "0")}:${duration.inMinutes.remainder(60).toString().padLeft(2, "0")}:${duration.inSeconds.remainder(60).toString().padLeft(2, "0")}";
+    } else {
+      return "${duration.inMinutes.remainder(60).toString().padLeft(2, "0")}:${duration.inSeconds.remainder(60).toString().padLeft(2, "0")}";
+    }
+  }
+
+  static double percentProgressBar(Duration a, Duration b) {
+    if (a.inSeconds != 0 && b.inSeconds != 0) return a.inSeconds / b.inSeconds;
+    return 0;
   }
 }

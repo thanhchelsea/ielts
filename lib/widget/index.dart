@@ -6,3 +6,5 @@ export 'tab_bar_page.dart';
 export 'slider.dart';
 export 'discussion_item.dart';
 export 'record_widget.dart';
+export 'dialog_app.dart';
+export 'bottom_sheet.dart';

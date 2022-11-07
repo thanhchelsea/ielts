@@ -1,6 +1,7 @@
+import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:ielts/utils/client_utils.dart';
 import 'package:path/path.dart';
@@ -15,12 +16,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class SpeakingController extends BaseController {
   GlobalKey globalKeyListen = GlobalKey();
   Rxn<Topic> topic = Rxn<Topic>();
-  // RxBool audioReading = false.obs;
   LevelSkillController levelSkillCtrl = Get.find();
   List<TargetFocus> listTargets = [];
   RxList<FileSystemEntity> recordeds = <FileSystemEntity>[].obs;
+  var durationCurrentRecord = Duration.zero.obs;
+  final store = PreferenceImpl();
   late TutorialCoachMark tutorialCoachMark;
   var appRecorder = AppRecorder().obs;
+  TextEditingController textEditingCtrl = TextEditingController();
   void initTargets() {
     listTargets.add(
       TargetFocus(
@@ -41,7 +44,8 @@ class SpeakingController extends BaseController {
                     Container(
                       width: 260.w,
                       height: 100.h,
-                      padding: EdgeInsets.symmetric(horizontal: largePadding, vertical: largePadding),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: largePadding, vertical: largePadding),
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.fill,
@@ -74,7 +78,7 @@ class SpeakingController extends BaseController {
     );
   }
 
-  void showAppTutorial() {
+  Future showAppTutorial() async {
     tutorialCoachMark = TutorialCoachMark(
       targets: listTargets,
       colorShadow: Colors.grey,
@@ -86,26 +90,34 @@ class SpeakingController extends BaseController {
       onSkip: () {},
       onClickOverlay: (target) {},
     );
+    var showGuildExists =
+        await store.readStore(key: PreferenceManager.guildPratice);
+    if (showGuildExists == null) {
+      await Future.delayed(
+        Duration(milliseconds: 500),
+        () {
+          tutorialCoachMark.show(
+            context: Get.overlayContext!,
+            rootOverlay: true,
+          );
+        },
+      );
+    }
+    await store.writeStore(key: PreferenceManager.guildPratice, value: true);
   }
 
   @override
   void onInit() async {
     initTargets();
-    showAppTutorial();
-
     super.onInit();
   }
 
   @override
   void onReady() async {
+    showAppTutorial();
     topic.value = levelSkillCtrl.topicChildSelected.value;
-    appRecorder.value = new AppRecorder();
-    appRecorder.value.startIt();
-
-    await Future.delayed(
-      Duration(milliseconds: 500),
-      () => tutorialCoachMark.show(context: Get.overlayContext!, rootOverlay: true),
-    );
+    appRecorder.value = AppRecorder();
+    appRecorder.value.startIt(folderName: topic.value!.id.toString());
     await getRecords();
     dataSubList.value = stringToListString();
     super.onReady();
@@ -125,11 +137,25 @@ class SpeakingController extends BaseController {
   }
 
 //recorder
-
+  Timer? timer;
   Future startRecord() async {
-    FileSystemEntity? r = await appRecorder.value.startRecord(folderName: topic.value!.id.toString());
-    if (r != null) recordeds.add(r);
-
+    durationCurrentRecord.value = Duration.zero;
+    FileSystemEntity? r = await appRecorder.value.startRecord(
+        folderName: topic.value!.id.toString(),
+        onRecording: () {
+          timer = Timer.periodic(Duration(seconds: 1), (timer) {
+            if (appRecorder.value.isPasue == false)
+              durationCurrentRecord.value =
+                  Duration(seconds: durationCurrentRecord.value.inSeconds + 1);
+          });
+        },
+        onStopRecord: () {
+          if (timer != null) timer!.cancel();
+        });
+    // if (timer != null) {
+    //   timer!.cancel();
+    // }
+    if (r != null) recordeds.insert(0, r);
     appRecorder.refresh();
   }
 
@@ -140,10 +166,230 @@ class SpeakingController extends BaseController {
       topic.value!.id.toString(),
     ); //'${tempDir.path}/$folderName/$nameFile.aac';
 
-    recordeds.value = await ClientUltis.dirContents(Directory(path));
-    recordeds.forEach((element) {
-      print("data: ${element.path.split("/").last}");
-    });
+    callDataService(
+      ClientUltis.dirContents(Directory(path)),
+      onSuccess: (response) {
+        recordeds.value = response as List<FileSystemEntity>;
+        recordeds.removeWhere(
+          (element) =>
+              element.path.split("/").last.split(".").last.contains("txt"),
+        );
+        recordeds.sort(
+          (a, b) => b.statSync().accessed.compareTo(a.statSync().accessed),
+        );
+      },
+    );
+  }
+
+  void reRecord() async {
+    await appRecorder.value.pauseRecord();
+    appRecorder.refresh();
+    if (appRecorder.value.isRecording) {
+      Get.dialog(
+        DialogApp(
+          icon: SvgPicture.asset(AppImages.again),
+          // icon: Image(image: AssetImage(AppImages.again)),
+          titleCofirm: "Record",
+          titleCancle: "Keep recording",
+          description: "You want to record from scratch?",
+          onCancel: () async {
+            Get.back();
+            await appRecorder.value.continueRecord();
+            appRecorder.refresh();
+          },
+          onConfirm: () async {
+            if (timer != null) timer!.cancel();
+            await appRecorder.value.stopRecord(saveFile: false);
+            await startRecord();
+            Get.back();
+          },
+        ),
+      );
+    }
+  }
+
+  void finishRecord() async {
+    await appRecorder.value.pauseRecord();
+    appRecorder.refresh();
+    if (appRecorder.value.isRecording) {
+      Get.dialog(
+        DialogApp(
+          icon: SvgPicture.asset(AppImages.cut),
+          // icon: Image(image: AssetImage(AppImages.again)),
+          titleCofirm: "Finish",
+          titleCancle: "Keep recording",
+          description:
+              "Haven't recorded the entire reading,\n do you want to end it?",
+          onCancel: () async {
+            Get.back();
+            await appRecorder.value.continueRecord();
+            appRecorder.refresh();
+          },
+          onConfirm: () async {
+            if (timer != null) timer!.cancel();
+            await startRecord();
+            Get.back();
+          },
+        ),
+      );
+    }
+  }
+
+  void backScreenPrevious() async {
+    if (appRecorder.value.isRecording) {
+      await appRecorder.value.pauseRecord();
+      appRecorder.refresh();
+      if (appRecorder.value.isRecording) {
+        Get.dialog(
+          DialogApp(
+            icon: SvgPicture.asset(AppImages.delete),
+            // icon: Image(image: AssetImage(AppImages.again)),
+            titleCofirm: "Exit",
+            titleCancle: "Keep recording",
+            description: "Not finished recording, do you want to exit?",
+            onCancel: () async {
+              Get.back();
+              await appRecorder.value.continueRecord();
+              appRecorder.refresh();
+            },
+            onConfirm: () async {
+              if (Get.isDialogOpen ?? false) {
+                Get.until((route) => !Get.isDialogOpen!);
+              }
+              Get.back();
+            },
+          ),
+        );
+      }
+    } else {
+      Get.back();
+    }
+  }
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  onTapMoreOfFile(FileSystemEntity fileSystemEntity) {
+    BottomSheetApp().showActionSheet(actions: [
+      ActionBottomSheet(
+        title: "Share(pro)",
+        onTap: () {},
+      ),
+      ActionBottomSheet(
+        title: "Rename",
+        onTap: () async {
+          Get.back();
+          Get.dialog(
+            DialogApp(
+              icon: Text(
+                "Rename",
+                style: StyleApp.titleNormal(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              // icon: Image(image: AssetImage(AppImages.again)),
+              titleCofirm: "Rename",
+              titleCancle: "Cancel",
+              description: "",
+              desWidget: Form(
+                key: _formKey,
+                child: InputFiledCustom(
+                  fillColor: Color(0xffEAEAEA).withOpacity(0.8),
+                  controller: textEditingCtrl,
+                  // iconPrefix: Icon(AppIcons.user),
+                  labelText:
+                      "${ClientUltis.getFileName(fileSystemEntity.path).split(".").first}",
+                  validator: (v) {
+                    return Validator().nameFile(v ?? "");
+                  },
+                  keyboardType: TextInputType.emailAddress,
+                  onChanged: (value) => null,
+                  color: AppColors.colorDark,
+                ),
+                // child: TextFormField(
+                //   enabled: true,
+                //   onTap: () {},
+                //   decoration: InputDecoration(
+                //     fillColor: Color(0xffEAEAEA).withOpacity(0.8),
+                //     filled: true,
+                //     errorText: null,
+                //     errorStyle: const TextStyle(
+                //       color: Colors.red,
+                //       fontSize: 12,
+                //     ),
+                //     hintStyle: StyleApp.textFieldStyle(
+                //       Get.context!,
+                //       fontSize: 14.sp,
+                //       color: Color(0xff6D6D6D),
+                //     ),
+                //     focusedBorder: const UnderlineInputBorder(
+                //       borderSide: BorderSide(color: Colors.transparent),
+                //     ),
+                //     errorBorder: InputBorder.none,
+                //     disabledBorder: const UnderlineInputBorder(
+                //       borderSide: BorderSide(color: Colors.transparent),
+                //     ),
+                //     focusedErrorBorder: InputBorder.none,
+                //     hintText:
+                //         "${ClientUltis.getFileName(fileSystemEntity.path).split(".").first}",
+                //     enabledBorder: InputBorder.none,
+                //   ),
+                //   controller: textEditingCtrl,
+                //   onFieldSubmitted: (value) {},
+                //   onChanged: (v) {},
+                //   maxLines: 1,
+                //   validator: (v) {
+                //     return Validator().nameFile(v ?? "");
+                //   },
+                // ),
+              ),
+              onCancel: () async {
+                Get.back();
+              },
+              onConfirm: () async {
+                if (_formKey.currentState!.validate()) {
+                  if (File(fileSystemEntity.path).existsSync() &&
+                      textEditingCtrl.text.isNotEmpty) {
+                    var path = fileSystemEntity.path;
+                    var lastSeparator =
+                        path.lastIndexOf(Platform.pathSeparator);
+
+                    var newPath = path.substring(0, lastSeparator + 1) +
+                        "${textEditingCtrl.text}.aac";
+                    int index = recordeds.indexWhere(
+                        (element) => element.path == fileSystemEntity.path);
+                    var replace = await fileSystemEntity.rename(newPath);
+                    recordeds.removeAt(index);
+                    recordeds.insert(index, replace);
+                    textEditingCtrl.text = "";
+                  }
+                  Get.back();
+                }
+              },
+            ),
+          );
+        },
+      ),
+      ActionBottomSheet(
+        title: "Delete",
+        onTap: () async {
+          if (File(fileSystemEntity.path).existsSync()) {
+            await File(fileSystemEntity.path).delete();
+            recordeds.remove(fileSystemEntity);
+          }
+          Get.back();
+        },
+      ),
+    ]);
+  }
+
+  @override
+  void onClose() {
+    if (timer != null) {
+      timer!.cancel();
+    }
+    appRecorder.value.closeRecord();
+    super.onClose();
   }
 
   String data = """How World War One changed United States Society?

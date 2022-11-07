@@ -32,7 +32,10 @@ class TextToSpeakController extends BaseController {
   void onReady() async {
     await initTTS();
     flutterTts.setProgressHandler((text, start, end, word) {
-      word = word.replaceAll(RegExp('\\n'), '').replaceAll(RegExp('[^A-Za-z0-9]'), '').toLowerCase();
+      word = word
+          .replaceAll(RegExp('\\n'), '')
+          .replaceAll(RegExp('[^A-Za-z0-9]'), '')
+          .toLowerCase();
       readed.add(word);
       state.value = STATESTT.PLAYING;
       // print(readed);

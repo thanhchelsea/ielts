@@ -240,7 +240,9 @@ class StyleApp {
     Color? color,
     FontWeight fontWeight = FontWeight.w500,
   }) {
-    final textColor = (color != null ? color : StyleApp.titleColor(context)?.withOpacity(0.8));
+    final textColor = (color != null
+        ? color
+        : StyleApp.titleColor(context)?.withOpacity(0.8));
     return StyleApp.subtitle1(context)?.copyWith(
       fontWeight: fontWeight,
       color: textColor,

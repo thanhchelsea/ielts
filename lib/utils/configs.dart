@@ -16,4 +16,7 @@ class Configs {
   static const int TOPIC_TYPE_EXCIRSE = 2;
   static const int TOPIC_TYPE_TEST = 3;
   static const int TOPIC_TYPE_CATEGORY = 4;
+
+  //practie
+  static const Duration maxRecordDuation = Duration(minutes: 5, seconds: 30);
 }

@@ -14,4 +14,7 @@ class AppImages {
   static String video = "assets/images/video.svg";
   static String praticeTopic = "assets/images/practice_topic.svg";
   static String iconAvatarDefault = "assets/images/default_avatar.svg";
+  static String again = "assets/images/again.svg";
+  static String cut = "assets/images/cut.svg";
+  static String delete = "assets/images/delete.svg";
 }

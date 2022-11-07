@@ -19,6 +19,7 @@ class InputFiledCustom extends StatefulWidget {
     this.color,
     this.fontSize = 14,
     this.enable = true,
+    this.fillColor,
   });
 
   final TextEditingController controller;
@@ -27,6 +28,7 @@ class InputFiledCustom extends StatefulWidget {
   final String? Function(String?)? validator;
   final TextInputType keyboardType;
   bool obscureText;
+  Color? fillColor;
   final int minLines;
   final int? maxLines;
   final void Function(String) onChanged;
@@ -55,7 +57,9 @@ class _InputFiledCustomState extends State<InputFiledCustom> {
           children: [
             Container(
               decoration: BoxDecoration(
-                  color: Get.theme.cardColor, // Get.isDarkMode ? Get.theme.cardColor : Colors.red,
+                  color: widget.fillColor ??
+                      Get.theme
+                          .cardColor, // Get.isDarkMode ? Get.theme.cardColor : Colors.red,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: Color(0xffEAEFF2))),
               padding: const EdgeInsets.only(right: 8),
@@ -77,7 +81,9 @@ class _InputFiledCustomState extends State<InputFiledCustom> {
                           controllerInput.showLabelText();
                         },
                         decoration: InputDecoration(
-                          fillColor: Get.theme.cardColor,
+                          fillColor: widget.fillColor != null
+                              ? Colors.transparent
+                              : Get.theme.cardColor,
                           filled: true,
                           errorText: null,
                           errorStyle: TextStyle(
@@ -114,13 +120,15 @@ class _InputFiledCustomState extends State<InputFiledCustom> {
                         obscureText: controllerInput.isHideText.value,
                         maxLines: 1,
                         validator: (v) {
-                          controllerInput.updateValidField(widget.validator!(v));
+                          controllerInput
+                              .updateValidField(widget.validator!(v));
                           return widget.validator!(v);
                         },
                       ),
                     ),
                   ),
-                  controllerInput.isShowSuccessValidate.value && widget.keyboardType == TextInputType.emailAddress
+                  controllerInput.isShowSuccessValidate.value &&
+                          widget.keyboardType == TextInputType.emailAddress
                       ? Container()
                       : InkWell(
                           onTap: () {
@@ -137,7 +145,9 @@ class _InputFiledCustomState extends State<InputFiledCustom> {
                                       )
                                     : Icon(
                                         FontAwesomeIcons.eyeSlash,
-                                        color: Get.isDarkMode ? AppColors.colorWhite : null,
+                                        color: Get.isDarkMode
+                                            ? AppColors.colorWhite
+                                            : null,
                                         size: 14,
                                       )
                                 : Container(),
@@ -152,7 +162,8 @@ class _InputFiledCustomState extends State<InputFiledCustom> {
                     child: Text(
                       controllerInput.validFiled.value,
                       style: TextStyle(
-                        color: Colors.red, // widget.color != null ? AppColors.colorPrimary : AppColors.white,
+                        color: Colors
+                            .red, // widget.color != null ? AppColors.colorPrimary : AppColors.white,
                       ),
                     ),
                   )
