@@ -24,10 +24,9 @@ class AppRecorder {
     String path = join(
       tempDir.path,
       folderName,
-      "audio.txt",
     );
-    if (!File(path).existsSync()) {
-      await File(path).create(recursive: true);
+    if ((await Directory(path).exists() == false)) {
+      await Directory(path).create();
     }
     final status = await Permission.microphone.request();
     if (status != PermissionStatus.granted) {
@@ -39,9 +38,7 @@ class AppRecorder {
 
 //record
   Future<FileSystemEntity?> startRecord(
-      {required String folderName,
-      Function? onRecording,
-      Function? onStopRecord}) async {
+      {required String folderName, Function? onRecording, Function? onStopRecord}) async {
     isRecording = !isRecording;
     if (isRecording) {
       isPasue = false;
@@ -89,19 +86,21 @@ class AppRecorder {
       }
       return null;
     } else {
-      final file = await File(filePath ?? "null")
-          .create(recursive: true)
-          .then((value) async {
+      print("dang save file");
+      final file = await File(filePath ?? "null").create(recursive: true).then((value) async {
         Uint8List bytes = await value.readAsBytes();
-        value.writeAsBytes(bytes);
-        return value as FileSystemEntity;
+        await value.writeAsBytes(bytes, flush: true);
+        return value;
       });
+
       return file;
     }
   }
 
   Future closeRecord() async {
-    await stopRecord(saveFile: false);
+    if (isRecording) {
+      await stopRecord(saveFile: false);
+    }
     await recorder.closeRecorder();
   }
 }

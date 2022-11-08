@@ -31,11 +31,13 @@ class LevelSkillUI extends BaseView<LevelSkillController> {
             return Expanded(
               child: Container(
                 margin: EdgeInsets.only(right: padding10),
-                child: TopicRoadMap(
-                  topics: controller.topicChilds[controller.topicSelected.value?.id ?? 0] ?? [],
-                  tapToic: (t) {
-                    controller.selectTopicChild(t);
-                  },
+                child: SingleChildScrollView(
+                  child: TopicRoadMap(
+                    topics: controller.topicChilds[controller.topicSelected.value?.id ?? 0] ?? [],
+                    tapToic: (t) {
+                      controller.selectTopicChild(t);
+                    },
+                  ),
                 ),
               ),
             );

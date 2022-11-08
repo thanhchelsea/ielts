@@ -24,7 +24,7 @@ class SplashUI extends BaseView<SplashController> {
             AppImages.splash,
             width: Get.width,
             // height: Get.height / 2,
-            // fit: BoxFit.cover,
+            fit: BoxFit.fill,
           ),
           Positioned(
             top: Get.height / 3,

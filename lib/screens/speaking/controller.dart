@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:ielts/screens/speaking/speech_to_text_controller.dart';
 import 'package:ielts/utils/client_utils.dart';
 import 'package:path/path.dart';
 import 'package:ielts/base/index.dart';
 import 'package:ielts/index.dart';
-import 'package:ielts/screens/speaking/text_to_speach_controller.dart';
+import 'package:ielts/screens/speaking/text_to_speech_controller.dart';
 import 'package:ielts/services/index.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -24,10 +25,12 @@ class SpeakingController extends BaseController {
   late TutorialCoachMark tutorialCoachMark;
   var appRecorder = AppRecorder().obs;
   TextEditingController textEditingCtrl = TextEditingController();
-  void initTargets() {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  SpeakToTextController speakToTextCtrl = Get.find();
+  void initTargetsTutorial() {
     listTargets.add(
       TargetFocus(
-        color: Color(0xFF323232),
+        color: const Color(0xFF323232),
         identify: "Target listen",
         keyTarget: globalKeyListen,
         paddingFocus: 6,
@@ -44,8 +47,7 @@ class SpeakingController extends BaseController {
                     Container(
                       width: 260.w,
                       height: 100.h,
-                      padding: EdgeInsets.symmetric(
-                          horizontal: largePadding, vertical: largePadding),
+                      padding: EdgeInsets.symmetric(horizontal: largePadding, vertical: largePadding),
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.fill,
@@ -90,8 +92,7 @@ class SpeakingController extends BaseController {
       onSkip: () {},
       onClickOverlay: (target) {},
     );
-    var showGuildExists =
-        await store.readStore(key: PreferenceManager.guildPratice);
+    var showGuildExists = await store.readStore(key: PreferenceManager.guildPratice);
     if (showGuildExists == null) {
       await Future.delayed(
         Duration(milliseconds: 500),
@@ -108,7 +109,7 @@ class SpeakingController extends BaseController {
 
   @override
   void onInit() async {
-    initTargets();
+    initTargetsTutorial();
     super.onInit();
   }
 
@@ -138,26 +139,6 @@ class SpeakingController extends BaseController {
 
 //recorder
   Timer? timer;
-  Future startRecord() async {
-    durationCurrentRecord.value = Duration.zero;
-    FileSystemEntity? r = await appRecorder.value.startRecord(
-        folderName: topic.value!.id.toString(),
-        onRecording: () {
-          timer = Timer.periodic(Duration(seconds: 1), (timer) {
-            if (appRecorder.value.isPasue == false)
-              durationCurrentRecord.value =
-                  Duration(seconds: durationCurrentRecord.value.inSeconds + 1);
-          });
-        },
-        onStopRecord: () {
-          if (timer != null) timer!.cancel();
-        });
-    // if (timer != null) {
-    //   timer!.cancel();
-    // }
-    if (r != null) recordeds.insert(0, r);
-    appRecorder.refresh();
-  }
 
   Future getRecords() async {
     var tempDir = await getApplicationDocumentsDirectory();
@@ -170,15 +151,41 @@ class SpeakingController extends BaseController {
       ClientUltis.dirContents(Directory(path)),
       onSuccess: (response) {
         recordeds.value = response as List<FileSystemEntity>;
+        recordeds.forEach((element) {
+          print("nanana ${element.path}");
+        });
         recordeds.removeWhere(
-          (element) =>
-              element.path.split("/").last.split(".").last.contains("txt"),
+          (element) => element.path.split("/").last.split(".").last.contains("txt"),
         );
         recordeds.sort(
           (a, b) => b.statSync().accessed.compareTo(a.statSync().accessed),
         );
       },
     );
+  }
+
+  Future startRecord() async {
+    durationCurrentRecord.value = Duration.zero;
+
+    FileSystemEntity? r = await appRecorder.value.startRecord(
+      folderName: topic.value!.id.toString(),
+      onRecording: () {
+        speakToTextCtrl.startListening();
+        timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+          if (appRecorder.value.isPasue == false) {
+            durationCurrentRecord.value = Duration(seconds: durationCurrentRecord.value.inSeconds + 1);
+          }
+        });
+      },
+      onStopRecord: () {
+        if (timer != null) timer!.cancel();
+      },
+    );
+    // if (timer != null) {
+    //   timer!.cancel();
+    // }
+    if (r != null) recordeds.insert(0, r);
+    appRecorder.refresh();
   }
 
   void reRecord() async {
@@ -218,8 +225,7 @@ class SpeakingController extends BaseController {
           // icon: Image(image: AssetImage(AppImages.again)),
           titleCofirm: "Finish",
           titleCancle: "Keep recording",
-          description:
-              "Haven't recorded the entire reading,\n do you want to end it?",
+          description: "Haven't recorded the entire reading,\n do you want to end it?",
           onCancel: () async {
             Get.back();
             await appRecorder.value.continueRecord();
@@ -266,8 +272,6 @@ class SpeakingController extends BaseController {
     }
   }
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   onTapMoreOfFile(FileSystemEntity fileSystemEntity) {
     BottomSheetApp().showActionSheet(actions: [
       ActionBottomSheet(
@@ -297,8 +301,7 @@ class SpeakingController extends BaseController {
                   fillColor: Color(0xffEAEAEA).withOpacity(0.8),
                   controller: textEditingCtrl,
                   // iconPrefix: Icon(AppIcons.user),
-                  labelText:
-                      "${ClientUltis.getFileName(fileSystemEntity.path).split(".").first}",
+                  labelText: "${ClientUltis.getFileName(fileSystemEntity.path).split(".").first}",
                   validator: (v) {
                     return Validator().nameFile(v ?? "");
                   },
@@ -306,58 +309,19 @@ class SpeakingController extends BaseController {
                   onChanged: (value) => null,
                   color: AppColors.colorDark,
                 ),
-                // child: TextFormField(
-                //   enabled: true,
-                //   onTap: () {},
-                //   decoration: InputDecoration(
-                //     fillColor: Color(0xffEAEAEA).withOpacity(0.8),
-                //     filled: true,
-                //     errorText: null,
-                //     errorStyle: const TextStyle(
-                //       color: Colors.red,
-                //       fontSize: 12,
-                //     ),
-                //     hintStyle: StyleApp.textFieldStyle(
-                //       Get.context!,
-                //       fontSize: 14.sp,
-                //       color: Color(0xff6D6D6D),
-                //     ),
-                //     focusedBorder: const UnderlineInputBorder(
-                //       borderSide: BorderSide(color: Colors.transparent),
-                //     ),
-                //     errorBorder: InputBorder.none,
-                //     disabledBorder: const UnderlineInputBorder(
-                //       borderSide: BorderSide(color: Colors.transparent),
-                //     ),
-                //     focusedErrorBorder: InputBorder.none,
-                //     hintText:
-                //         "${ClientUltis.getFileName(fileSystemEntity.path).split(".").first}",
-                //     enabledBorder: InputBorder.none,
-                //   ),
-                //   controller: textEditingCtrl,
-                //   onFieldSubmitted: (value) {},
-                //   onChanged: (v) {},
-                //   maxLines: 1,
-                //   validator: (v) {
-                //     return Validator().nameFile(v ?? "");
-                //   },
-                // ),
               ),
               onCancel: () async {
                 Get.back();
+                textEditingCtrl.text = "";
               },
               onConfirm: () async {
                 if (_formKey.currentState!.validate()) {
-                  if (File(fileSystemEntity.path).existsSync() &&
-                      textEditingCtrl.text.isNotEmpty) {
+                  if (File(fileSystemEntity.path).existsSync() && textEditingCtrl.text.isNotEmpty) {
                     var path = fileSystemEntity.path;
-                    var lastSeparator =
-                        path.lastIndexOf(Platform.pathSeparator);
+                    var lastSeparator = path.lastIndexOf(Platform.pathSeparator);
 
-                    var newPath = path.substring(0, lastSeparator + 1) +
-                        "${textEditingCtrl.text}.aac";
-                    int index = recordeds.indexWhere(
-                        (element) => element.path == fileSystemEntity.path);
+                    var newPath = path.substring(0, lastSeparator + 1) + "${textEditingCtrl.text}.aac";
+                    int index = recordeds.indexWhere((element) => element.path == fileSystemEntity.path);
                     var replace = await fileSystemEntity.rename(newPath);
                     recordeds.removeAt(index);
                     recordeds.insert(index, replace);

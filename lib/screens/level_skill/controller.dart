@@ -35,7 +35,16 @@ class LevelSkillController extends BaseController {
         } else {
           //topic child
           List<Topic> topicChild = response as List<Topic>;
+          topicChild.forEach((element) {});
           topicChilds[parentId] = topicChild;
+          int i = 0;
+          topicChilds[parentId]!.add(topicChild[0]);
+          topicChilds[parentId]!.add(topicChild[0]);
+          topicChilds[parentId]!.add(topicChild[0]);
+          topicChilds[parentId]!.add(topicChild[0]);
+          topicChilds[parentId]!.add(topicChild[0]);
+          topicChilds[parentId]!.add(topicChild[0]);
+          topicChilds[parentId]!.add(topicChild[0]);
         }
       },
     );
