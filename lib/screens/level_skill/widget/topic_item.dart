@@ -12,6 +12,7 @@ class TopicItemNew extends StatefulWidget {
   final int topicIndex;
   final Topic topic;
   final Function tapToStudy;
+  final bool isLock;
 
   TopicItemNew(
       {required this.showAnim,
@@ -19,6 +20,7 @@ class TopicItemNew extends StatefulWidget {
       required this.color,
       required this.tapToStudy,
       required this.topic,
+      this.isLock = false,
       required this.topicIndex})
       : super();
 
@@ -181,7 +183,7 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
       borderRadius: 12.0,
       child: Container(
         decoration: BoxDecoration(
-          color: colorOutside,
+          color: widget.isLock ? Colors.white : colorOutside,
         ),
         padding: EdgeInsets.symmetric(
           vertical: padding10,
@@ -191,11 +193,13 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
           sides: 6,
           borderRadius: 12.0,
           child: Container(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                colors: colors,
-              ),
-            ),
+            decoration: !widget.isLock
+                ? BoxDecoration(
+                    gradient: RadialGradient(
+                      colors: colors,
+                    ),
+                  )
+                : const BoxDecoration(color: Color(0xFFEDF0F8)),
             child: Container(
               height: 300,
               padding: EdgeInsets.symmetric(horizontal: padding_4),
@@ -205,6 +209,7 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
                   SvgPicture.asset(
                     topic.type == Configs.TOPIC_TYPE_LESSON ? AppImages.video : AppImages.praticeTopic,
                     width: 25.w,
+                    color: widget.isLock ? const Color(0xffAEB1BC) : null,
                   ),
                   SizedBox(height: padding_4),
                   FittedBox(
@@ -212,7 +217,10 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
                     child: Text(
                       topic.type == Configs.TOPIC_TYPE_LESSON ? "Video" : "Practice",
                       maxLines: 1,
-                      style: StyleApp.titleSmall(color: colorText, fontSize: 9.sp, fontWeight: FontWeight.w600),
+                      style: StyleApp.titleSmall(
+                          color: widget.isLock ? const Color(0xffAEB1BC) : colorText,
+                          fontSize: 9.sp,
+                          fontWeight: FontWeight.w600),
                     ),
                   ),
                 ],

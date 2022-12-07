@@ -8,6 +8,8 @@ import 'topic_item.dart';
 import 'dart:math' as Math;
 import 'package:path_drawing/path_drawing.dart';
 
+enum DirectionLine { left_to_right, right_to_left }
+
 class TopicRoadMap extends StatefulWidget {
   TopicRoadMap({
     Key? key,
@@ -29,7 +31,7 @@ double paddingScrren = 24.w;
 int rowTopicSpacing = 30;
 
 class _TopicRoadMapState extends State<TopicRoadMap> {
-  int rowTopic = 0, currentPart = 0;
+  int rowTopic = 0, lastIndexUnlock = 0;
   Size size = Get.size;
   @override
   void didChangeDependencies() {
@@ -43,7 +45,7 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
       child: _makeListTopic(widget.topics),
       painter: Drawline(
           row: rowTopic,
-          currentPart: currentPart,
+          lastIndexUnlock: lastIndexUnlock,
           color: AppColors.colorCardPrimary,
           rowPadding: rowTopicSpacing,
           topicsLength: widget.topics.length),
@@ -55,15 +57,17 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
     int temp = 0;
     Widget widget;
     List<Widget> childs = [];
-    currentPart = 0;
+    lastIndexUnlock = 0;
     int lastChildLock = 0;
     for (int index = 0; index < topics.length; index++) {
       Topic topic = topics[index];
+      var isLock = true;
       if ((topic.topicProgress?.progress ?? 0) == 0) {
-        currentPart = index;
+        //check lock topic here
+        lastIndexUnlock = index;
       }
       if (temp % 2 == 0) {
-        childs.add(_makeTopicItem(topic, index, topic.id == lastChildLock));
+        childs.add(_makeTopicItem(topic, index, topic.id == lastChildLock, isLock));
         if (childs.length == 3) {
           List<Widget> cs = [];
           cs.addAll(childs);
@@ -71,9 +75,16 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
           temp++;
           childs = [];
           widgets.add(widget);
+        } else if (index > 0 && childs.length == 2 && index % 3 == 1 && index == topics.length - 1) {
+          childs.insert(
+              2,
+              const SizedBox(
+                width: 102.4,
+                height: 102.4,
+              ));
         }
       } else {
-        childs.insert(0, _makeTopicItem(topic, index, topic.id == lastChildLock));
+        childs.insert(0, _makeTopicItem(topic, index, topic.id == lastChildLock, isLock));
         if (childs.length == 3) {
           List<Widget> cs = [];
           cs.addAll(childs);
@@ -88,7 +99,7 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
         } else if (index > 0 && childs.length == 2 && index % 3 == 1 && index == topics.length - 1) {
           childs.insert(
               0,
-              Container(
+              const SizedBox(
                 width: 102.4,
                 height: 102.4,
               ));
@@ -115,19 +126,24 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
       padding: EdgeInsets.only(bottom: rowTopicSpacing.toDouble()),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: childs.length < 3 ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: childs.length == 1
+            ? widget.topics.length % 6 == 1
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.end
+            : MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
         children: childs,
       ),
     );
   }
 
-  _makeTopicItem(Topic topic, int index, bool showAnim) {
+  _makeTopicItem(Topic topic, int index, bool showAnim, bool isLock) {
     return TopicItemNew(
       color: Colors.red,
       showAnim: showAnim,
       size: topicItemSize,
       topic: topic,
+      isLock: isLock,
       topicIndex: index + 1,
       tapToStudy: (Topic topic) {
         widget.tapToic(topic);
@@ -139,7 +155,7 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
 
 class Drawline extends CustomPainter {
   final int row;
-  final int currentPart;
+  final int lastIndexUnlock;
   final Color color;
   int rowPadding;
   int topicsLength;
@@ -147,7 +163,7 @@ class Drawline extends CustomPainter {
 
   Drawline(
       {required this.row,
-      required this.currentPart,
+      required this.lastIndexUnlock,
       required this.color,
       this.rowPadding = 30,
       this.topicsLength = 0}) {
@@ -160,15 +176,50 @@ class Drawline extends CustomPainter {
   drawLine(Canvas canvas, double x, double y, Size size, int limit, int rowPadding, int index, int topicsLength,
       bool _lastRow) {
     var _topicLenghs = topicsLength;
-    bool _drawLimitToCenter = (_topicLenghs > 0 && _topicLenghs % 3 == 2);
+    int reminderDivision = _topicLenghs % 3;
     var path = Path();
     var _newY = y + index * rowPadding;
     path.moveTo(x, _newY);
-    if (_drawLimitToCenter && _lastRow) {
-      path.moveTo(x + (size.width - 2 * padding) / 3, _newY);
-      path.lineTo(x + (size.width - (padding + topicItemSize / 2) * 2), _newY);
+    var _lineLong = (size.width - (16.w + topicItemSize / 2) * 2);
+    var _betweenItemLong = _lineLong / 2;
+    if (_topicLenghs > 0 && !_lastRow) {
+      path.lineTo(x + _lineLong, _newY);
     } else {
-      path.lineTo(x + (size.width - (padding + topicItemSize / 2) * 2), _newY);
+      DirectionLine _directionLine = (index % 2 == 0) ? DirectionLine.left_to_right : DirectionLine.right_to_left;
+      double _startPoint = 0;
+      double _endPoint = 0;
+      switch (reminderDivision) {
+        case 0:
+          _startPoint = x;
+          _endPoint = _startPoint + _lineLong;
+          path.lineTo(_endPoint, _newY);
+          break;
+        case 1:
+          // if (_directionLine == DirectionLine.right_to_left) {
+          //   _startPoint = x + _betweenItemLong;
+          //   _endPoint = _startPoint + _betweenItemLong;
+          // } else {
+          //   _startPoint = x;
+          //   _endPoint = _startPoint + _betweenItemLong;
+          // }
+          // path.moveTo(_startPoint, _newY);
+          // path.lineTo(_endPoint, _newY);
+
+          break;
+        case 2:
+          var _spacingEvenly = topicItemSize / 2;
+          if (_directionLine == DirectionLine.right_to_left) {
+            _startPoint = x + _lineLong / 2;
+            _endPoint = _startPoint + _lineLong / 2 + _spacingEvenly;
+          } else {
+            _startPoint = x;
+            _endPoint = _startPoint + _lineLong - _spacingEvenly * 2;
+          }
+          path.moveTo(_startPoint, _newY);
+          path.lineTo(_endPoint, _newY);
+          break;
+        default:
+      }
     }
     canvas.drawPath(
       dashPathWidthLimit(path, dashArray: CircularIntervalList<double>(<double>[5, 10]), limit: limit),
@@ -220,19 +271,21 @@ class Drawline extends CustomPainter {
   }
 
   MyPossition _findPossition(int part) {
-    int add = 0;
+    int add = 1;
     double index = 0;
-    if (part % 5 == 4) {
-      add = 2;
-      index = 1.5;
-    } else if (part % 5 == 1 || part % 5 == 2 || part % 5 == 3) {
-      add = 1;
-      index = (part % 5 - 1).roundToDouble();
+    if (part >= topicsLength) {
+      // case unlock last topic
+      index = 2.5;
+    } else if (part % 3 == 1) {
+      part == topicsLength - 1 ? index = 1.5 : index = 2;
+    } else if (part % 3 == 2) {
+      int a = part ~/ 3;
+      index = a % 2 == 0 ? 1.0 : 0.5;
     } else {
-      add = 0;
-      index = 0.5;
+      index = 0;
     }
-    int row = (part ~/ 5) * 2 + add;
+    int row = (part ~/ 3) + add; // ve den hang thu row
+
     var _position = MyPossition(row: row, index: index);
     return _position;
   }
@@ -242,16 +295,16 @@ class Drawline extends CustomPainter {
     double lineLength = size.width - (padding + topicItemSize / 2) * 2;
     int maxUnderLine =
         (lineLength / (5 + 10)).round(); // 5 + 10 = CircularIntervalList<double>(<double>[5, 10]), dấu gạch nối
-    MyPossition possition = _findPossition(currentPart + 1);
-    for (int index = 0; index < row; index++) {
+    MyPossition possition = _findPossition(lastIndexUnlock + 1);
+    for (int indexRow = 0; indexRow < row; indexRow++) {
       int limitLine = 0, limitCircle = 0;
-      if (index + 1 < possition.row) {
+      if (indexRow + 1 < possition.row) {
         limitLine = maxUnderLine * 2;
         limitCircle = maxUnderLine * 2;
       }
-      if (index + 1 == possition.row) {
+      if (indexRow + 1 == possition.row) {
         if (possition.index == 0.5) {
-          limitLine = -1 * (maxUnderLine / 2).round();
+          limitLine = -2 * (maxUnderLine / 2).round();
           limitCircle = 0;
         }
         if (possition.index == 1.5) {
@@ -267,15 +320,20 @@ class Drawline extends CustomPainter {
           limitCircle = 0;
         }
       }
-      drawLine(canvas, padding + topicItemSize / 2, topicItemSize / 2 + topicItemSize * index, size, limitLine,
-          rowPadding, index, topicsLength, (index + 1 == row));
-      if (index < row - 1) {
+      drawLine(canvas, padding + topicItemSize / 2, topicItemSize / 2 + topicItemSize * indexRow, size, limitLine,
+          rowPadding, indexRow, topicsLength, (indexRow + 1 == row));
+      if (indexRow < row - 1) {
+        if (indexRow + 1 >= possition.row - 1 && possition.index == 0.0) {
+          // var part of possition %3=0 (unlock at topic%3 == 0)
+          limitCircle = 0;
+          limitLine = 0;
+        }
         // TODO - ĐÍT CONG
-        // drawHaftCircle(canvas, padding + topicItemSize / 2, topicItemSize / 2 + topicItemSize * index, size,
-        //     index % 2 == 0 ? 'right' : 'left', limitCircle);
+        // drawHaftCircle(canvas, padding + topicItemSize / 2, topicItemSize / 2 + topicItemSize * indexRow, size,
+        //     indexRow % 2 == 0 ? 'right' : 'left', limitCircle);
         // TODO - ĐÍT VUÔNG
-        drawVerticalLine(canvas, padding + topicItemSize / 2, topicItemSize / 2 + topicItemSize * index, size,
-            index % 2 == 0 ? 'right' : 'left', limitCircle, rowPadding, index);
+        drawVerticalLine(canvas, padding + topicItemSize / 2, topicItemSize / 2 + topicItemSize * indexRow, size,
+            indexRow % 2 == 0 ? 'right' : 'left', limitCircle, rowPadding, indexRow);
       }
     }
   }
