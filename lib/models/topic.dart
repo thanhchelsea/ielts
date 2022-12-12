@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+import 'package:ielts/utils/client_utils.dart';
 
 import '../index.dart';
 
@@ -29,7 +31,41 @@ class Topic {
   int duration;
   int pass;
   MyCardData? myCardData;
+  TopicProgress? progress;
   List<int> documentIds;
+
+  TopicProgress getTopicProgress() {
+    if (this.progress != null) {
+      this.progress!.lastChildCardNum = this.childrentIds.length;
+      return this.progress!;
+    } else {
+      String userID = ClientData.user?.id ?? "";
+      String id = ClientUltis.generateTopicProgressId(courseId, this.id, userID);
+      TopicProgress data = TopicProgress(
+        id: id,
+        parentId: this.parentId,
+        topicId: this.id,
+        userId: userID,
+        courseId: this.courseId,
+        lastUpdate: this.lastUpdate,
+        lastChildCardNum: childrentIds.length,
+        categoryName: "",
+        languageId: 0,
+        passed: 0,
+        progress: 0,
+        status: 1,
+        studyStatus: 1,
+        testScore: 0,
+        topicDatabase: 0,
+        userName: "",
+        viewNum: 0,
+      );
+
+      this.progress = data;
+      return data;
+    }
+  }
+
   Topic({
     required this.id,
     required this.userId,
@@ -54,10 +90,10 @@ class Topic {
     required this.studyMode,
     required this.duration,
     required this.pass,
-    this.myCardData,
+    required this.myCardData,
     required this.documentIds,
+    required this.progress,
   });
-  TopicProgress? topicProgress;
 
   Topic copyWith({
     int? id,
@@ -84,6 +120,7 @@ class Topic {
     int? duration,
     int? pass,
     MyCardData? myCardData,
+    TopicProgress? topicProgress,
     List<int>? documentIds,
   }) {
     return Topic(
@@ -112,6 +149,7 @@ class Topic {
       pass: pass ?? this.pass,
       myCardData: myCardData ?? this.myCardData,
       documentIds: documentIds ?? this.documentIds,
+      progress: topicProgress ?? this.progress,
     );
   }
 
@@ -142,6 +180,7 @@ class Topic {
       'pass': pass,
       'myCardData': myCardData?.toMap(),
       'documentIds': documentIds,
+      'progress': progress,
     };
   }
 
@@ -172,6 +211,7 @@ class Topic {
       pass: map['pass']?.toInt() ?? 0,
       myCardData: map['myCardData'] != null ? MyCardData.fromMap(map['myCardData']) : null,
       documentIds: List<int>.from(map['documentIds']),
+      progress: map['progress'] != null ? TopicProgress.fromMap(map['progress']) : null,
     );
   }
 

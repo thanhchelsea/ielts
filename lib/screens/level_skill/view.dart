@@ -33,7 +33,7 @@ class LevelSkillUI extends BaseView<LevelSkillController> {
                 margin: EdgeInsets.only(right: padding10),
                 child: SingleChildScrollView(
                   child: TopicRoadMap(
-                    topics: controller.topicChilds[controller.topicSelected.value?.id ?? 0] ?? [],
+                    topics: controller.topicChilds[controller.topicParentSelected.value?.id ?? 0] ?? [],
                     tapToic: (t) {
                       controller.selectTopicChild(t);
                     },
@@ -69,7 +69,7 @@ class LevelSkillUI extends BaseView<LevelSkillController> {
                   child: Row(
                     children: List.generate(controller.topics.length, (index) {
                       bool selected = false;
-                      if (controller.topicSelected.value!.id == controller.topics[index].id) {
+                      if (controller.topicParentSelected.value!.id == controller.topics[index].id) {
                         selected = true;
                       }
                       return Container(

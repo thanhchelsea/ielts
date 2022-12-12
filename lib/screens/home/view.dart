@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:ielts/base/index.dart';
 import 'package:ielts/index.dart';
+import 'package:ielts/screens/sign_in/index.dart';
 import 'package:ielts/widget/custom_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -45,18 +46,17 @@ class HomeUi extends BaseView<HomeController> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Hi Mike!",
-                      style: StyleApp.headlineNormal(),
+                    Obx(
+                      () => Text(
+                        "Hi ${Get.find<SignInController>().user.value?.name}",
+                        style: StyleApp.headlineNormal(),
+                      ),
                     ),
                     SizedBox(width: padding_4),
-                    Container(
-                      // color: Colors.red,
-                      child: SvgPicture.asset(
-                        AppImages.wave,
-                        width: 28.w,
-                        // height: 24.w,
-                      ),
+                    SvgPicture.asset(
+                      AppImages.wave,
+                      width: 28.w,
+                      // height: 24.w,
                     ),
                   ],
                 ),
@@ -64,7 +64,7 @@ class HomeUi extends BaseView<HomeController> {
                 Text(
                   "Welcome Ielts Lydia",
                   style: StyleApp.headlineBold(
-                    color: Color(0xff153D7B),
+                    color: const Color(0xff153D7B),
                     fontSize: 19.sp,
                   ),
                 )
@@ -307,11 +307,9 @@ class HomeUi extends BaseView<HomeController> {
                 borderRadius: BorderRadius.circular(borderRadius),
                 color: AppColors.colorBoldCardPrimary,
               ),
-              child: Container(
-                child: SvgPicture.asset(
-                  AppImages.conversation,
-                  width: 36.w,
-                ),
+              child: SvgPicture.asset(
+                AppImages.conversation,
+                width: 36.w,             
               ),
             ),
             SizedBox(width: padding10),

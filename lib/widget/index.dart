@@ -8,3 +8,4 @@ export 'discussion_item.dart';
 export 'record_widget.dart';
 export 'dialog_app.dart';
 export 'bottom_sheet.dart';
+export 'grammar_spelling_check_doc.dart';

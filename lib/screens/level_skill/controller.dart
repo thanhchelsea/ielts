@@ -8,7 +8,7 @@ class LevelSkillController extends BaseController {
   RxList<Topic> topics = <Topic>[].obs;
   ServerRepository serverRepo = ServerRepository();
   HomeController homeC = Get.find();
-  Rxn<Topic> topicSelected = Rxn<Topic>();
+  Rxn<Topic> topicParentSelected = Rxn<Topic>();
   Rxn<Topic> topicChildSelected = Rxn<Topic>();
 
   RxMap<int, List<Topic>> topicChilds = RxMap<int, List<Topic>>();
@@ -27,7 +27,7 @@ class LevelSkillController extends BaseController {
           //topic parent
           topics.value = response as List<Topic>;
           if (topics.isNotEmpty) {
-            topicSelected.value = topics[0];
+            topicParentSelected.value = topics[0];
             for (var element in topics) {
               topicChilds.putIfAbsent(element.id, () => []);
             }
@@ -35,23 +35,14 @@ class LevelSkillController extends BaseController {
         } else {
           //topic child
           List<Topic> topicChild = response as List<Topic>;
-          topicChild.forEach((element) {});
           topicChilds[parentId] = topicChild;
-          int i = 0;
-          topicChilds[parentId]!.add(topicChild[0]);
-          topicChilds[parentId]!.add(topicChild[0]);
-          topicChilds[parentId]!.add(topicChild[0]);
-          topicChilds[parentId]!.add(topicChild[0]);
-          topicChilds[parentId]!.add(topicChild[0]);
-          topicChilds[parentId]!.add(topicChild[0]);
-          topicChilds[parentId]!.add(topicChild[0]);
         }
       },
     );
   }
 
   void selectTopic(Topic t) {
-    topicSelected.value = t;
+    topicParentSelected.value = t;
     if (topicChilds[t.id] != null && topicChilds[t.id]!.isEmpty) loadTopicByParent(parentId: t.id);
   }
 
@@ -59,7 +50,6 @@ class LevelSkillController extends BaseController {
     Topic t, {
     bool nextTopic = false,
   }) {
-    print(t.id);
     topicChildSelected.value = t;
     if (nextTopic) {
       //next topic in video
@@ -77,6 +67,12 @@ class LevelSkillController extends BaseController {
     switch (topicChildSelected.value!.type) {
       case Configs.TOPIC_TYPE_LESSON:
         {
+          topicChilds[t.parentId]?.forEach((element) {
+            if (element.id == t.id) {
+              element.getTopicProgress().progress = 100;
+            }
+          });
+          topicChilds.refresh();
           !nextTopic ? Get.toNamed(RouterNames.VIDEO) : Get.offNamed(RouterNames.VIDEO);
           return;
         }
@@ -91,7 +87,7 @@ class LevelSkillController extends BaseController {
   @override
   void onReady() {
     loadTopicByParent().then((value) {
-      if (topicSelected.value != null) loadTopicByParent(parentId: topicSelected.value!.id);
+      if (topicParentSelected.value != null) loadTopicByParent(parentId: topicParentSelected.value!.id);
     });
     super.onReady();
   }

@@ -63,7 +63,7 @@ abstract class BaseView<Controller extends BaseController> extends GetView<Contr
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: AppColors.colorGradientScreen,
+            colors: AppColors.colorGradientBackgroundScreen,
           ),
         ),
         child: Container(height: Get.height, child: body(context)),

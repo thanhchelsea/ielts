@@ -10,8 +10,8 @@ abstract class AppColors {
   static const Color colorBoldCardPrimary = Color(0xff3F7AD9);
   static const Color colorTextPrimay = Color(0xff0285FE);
   static const Color pageBackground = Color(0xFFFAFBFD);
-  static Color shadowColor = Color(0xff6F87C3).withOpacity(0.25);
-  static const List<Color> colorGradientScreen = [
+  static Color shadowColor = const Color(0xff6F87C3).withOpacity(0.25);
+  static const List<Color> colorGradientBackgroundScreen = [
     Color(0xffE5FFFF),
     Color(0xffF5F6F9),
     Color(0xffF6F7FB),
@@ -25,7 +25,7 @@ abstract class AppColors {
   static const Color colorLightGreen = Color(0xFF00EFA7);
   static const Color colorWhite = Color(0xFFFFFFFF);
   static const Color lightGreyColor = Color(0xFFC4C4C4);
-  static const Color errorColor = Color(0xFFAB0B0B);
+  static const Color errorColor = Color(0xFFFD0202);
   static const Color colorDark = Color(0xFF323232);
 
   static const Color buttonBgColor = colorPrimaryApp;

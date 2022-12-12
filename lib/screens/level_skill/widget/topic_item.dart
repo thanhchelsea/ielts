@@ -26,7 +26,12 @@ class TopicItemNew extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => TopicItemNewState(
-      size: this.size, color: this.color, topicIndex: this.topicIndex, topic: this.topic, tapToStudy: this.tapToStudy);
+        size: this.size,
+        color: this.color,
+        topicIndex: this.topicIndex,
+        topic: this.topic,
+        tapToStudy: this.tapToStudy,
+      );
 }
 
 class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderStateMixin {
@@ -40,13 +45,13 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
   double padding12 = 12.h;
   double padding_4 = 4.h;
   double padding10 = 10.h;
-  TopicItemNewState(
-      {required this.size,
-      required this.color,
-      required this.tapToStudy,
-      required this.topicIndex,
-      required this.topic})
-      : super();
+  TopicItemNewState({
+    required this.size,
+    required this.color,
+    required this.tapToStudy,
+    required this.topicIndex,
+    required this.topic,
+  }) : super();
 
   @override
   void initState() {
@@ -145,7 +150,7 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
   }
 
   Widget _makeTopicIndex() {
-    if (topic.topicProgress?.progress == 100) {
+    if (topic.getTopicProgress().progress == 100) {
       return Center(child: null);
     }
     // if (topic.progress.lock == true) {
@@ -170,7 +175,7 @@ class TopicItemNewState extends State<TopicItemNew> with SingleTickerProviderSta
       Color(0xff3F7BDD),
       Color(0xff88B9FF),
     ];
-    if (topic.topicProgress?.progress == 0) {
+    if (topic.getTopicProgress().progress == 0) {
       colorText = AppColors.colorInActive;
       colorOutside = Colors.white;
       colors = [

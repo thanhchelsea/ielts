@@ -58,25 +58,23 @@ class ClientUltis {
       index++;
     }
     data += '';
-    print(":xxxxxx $data");
     return data;
   }
 
   static String convertDateComment(int date) {
-    // print("time rb");
     String time = "";
     int toDayDate = DateTime.now().millisecondsSinceEpoch;
     int second = (toDayDate / 1000 - date / 1000).round();
 
     if (second < 60) {
-      time = "1 " + "minute ago";
+      time = "1 minute ago";
     } else if (second >= 60 && second < 60 * 60) {
       int minute = second ~/ 60;
-      time = "$minute " + "${minute > 1 ? "minutes ago" : "minute ago"}";
+      time = "$minute ${minute > 1 ? "minutes ago" : "minute ago"}";
     } else if (second >= 60 * 60 && second < 24 * 60 * 60) {
       int hour = second ~/ (60 * 60);
-      int minute = (second % (60 * 60)) ~/ 60;
-      time = "$hour " + "hour ago";
+      // int minute = (second % (60 * 60)) ~/ 60;
+      time = "$hour hour ago";
     } else {
       DateTime t = DateTime.fromMillisecondsSinceEpoch(date);
       String formattedDate = DateFormat('dd/MM/yyyy').format(t);
@@ -85,12 +83,18 @@ class ClientUltis {
     return time;
   }
 
-  static bool compareTo({required String text1, required String text2}) {
-    return text1.toLowerCase().replaceAll(RegExp('[^A-Za-z0-9]'), '').compareTo(
-                text2.toLowerCase().replaceAll(RegExp('[^A-Za-z0-9]'), '')) <
-            0
-        ? false
-        : true;
+  static List<String> stringToListString(String data) {
+    List<String> s = [];
+    s = data.replaceAll(RegExp('\\n'), ' ').split(" ");
+    return s;
+  }
+
+  static bool textCompareTo({required String text1, required String text2}) {
+    int checkCompare = text1
+        .toLowerCase()
+        .replaceAll(RegExp('[^A-Za-z0-9]'), '')
+        .compareTo(text2.toLowerCase().replaceAll(RegExp('[^A-Za-z0-9]'), ''));
+    return (checkCompare < 0 || checkCompare > 0) ? false : true;
   }
 
   static Future<List<FileSystemEntity>> dirContents(Directory dir) {
@@ -110,8 +114,7 @@ class ClientUltis {
   static String getTimeCreteFile(String path) {
     final stat = FileStat.statSync(path);
     DateFormat("hh:mm");
-    Duration diff =
-        getStartDate(DateTime.now()).difference(getStartDate(stat.accessed));
+    Duration diff = getStartDate(DateTime.now()).difference(getStartDate(stat.accessed));
 
     String createDate = "";
     if (diff.inHours < 24) {
@@ -138,5 +141,9 @@ class ClientUltis {
   static double percentProgressBar(Duration a, Duration b) {
     if (a.inSeconds != 0 && b.inSeconds != 0) return a.inSeconds / b.inSeconds;
     return 0;
+  }
+
+  static String generateTopicProgressId(int courseId, int topicId, String userId) {
+    return courseId.toString() + "_" + topicId.toString() + "_" + userId;
   }
 }

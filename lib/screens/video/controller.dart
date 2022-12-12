@@ -96,6 +96,7 @@ class VideoController extends BaseController {
   String getLinkVideo(String description) {
     String url = "";
     var document = parse(description);
+    print("cxxxx ${document.getElementsByTagName("img")}}");
     url = document.getElementsByTagName("img")[0].attributes["src-video-js"].toString();
     return url;
   }

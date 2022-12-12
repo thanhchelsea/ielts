@@ -33,8 +33,8 @@ class SpeakingUI extends BaseView<SpeakingController> {
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: padding, vertical: halfPadding),
                   child: TabBarPage(
-                    nameTabs: ["Practice", "History"],
-                    iconTabs: [AppIcons.practice, AppIcons.history],
+                    nameTabs: const ["Practice", "History"],
+                    iconTabs: const [AppIcons.practice, AppIcons.history],
                     id: Get.currentRoute,
                     tabsView: [practiceView(), Text("document")],
                     marginTabbar: EdgeInsets.only(bottom: padding_6),
@@ -68,43 +68,17 @@ class SpeakingUI extends BaseView<SpeakingController> {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Obx(
-                  () => RichText(
-                    text: TextSpan(
-                      children: List.generate(
-                        controller.dataSubList.length,
-                        (index) {
-                          TextToSpeakController ttsCtrl = Get.find<TextToSpeakController>();
-                          Color color = Colors.black;
-                          // if (ttsCtrl.readed.isNotEmpty) {
-                          //   if (index == ttsCtrl.readed.length - 1) {
-                          //     print("${ttsCtrl.readed[index]} __ ${controller.dataSubList.value[index]}");
-                          //     if (ClientUltis.compareTo(
-                          //         text1: controller.dataSubList.value[index], text2: ttsCtrl.readed[index])) {
-                          //       color = AppColors.colorPrimaryApp2;
-                          //     }
-                          //   }
-                          // }
-                          if (index < ttsCtrl.readed.length &&
-                              Get.find<TextToSpeakController>().state == STATESTT.PLAYING) {
-                            if (ttsCtrl.readed.contains(
-                              controller.dataSubList[index]
-                                  .replaceAll(RegExp('\\n'), ' ')
-                                  .replaceAll(RegExp('[^A-Za-z0-9]'), '')
-                                  .toLowerCase(),
-                            )) {
-                              color = AppColors.colorPrimaryApp2;
-                            } else {}
-                          }
-                          return TextSpan(
-                            text: controller.dataSubList.value[index] + " ",
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: color,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                  () => GrammarAndSpellingCheckDoc(
+                    doc: controller.dataSubList.value,
+                    textReaded: [
+                      // "how",
+                      "world",
+                      "war",
+                      "changed",
+                      "changed",
+                      "states",
+                    ],
+                    // textReaded: Get.find<TextToSpeakController>().readed.value,
                   ),
                 ),
               ),

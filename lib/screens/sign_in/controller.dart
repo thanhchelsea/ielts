@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ielts/base/index.dart';
 import 'package:ielts/index.dart';
-import 'package:logger/logger.dart';
 
 class SignInController extends BaseController {
   static SignInController to = Get.find();
@@ -26,6 +25,7 @@ class SignInController extends BaseController {
       onSuccess: (response) async {
         User userLogin = response as User;
         user.value = userLogin;
+        ClientData.user = userLogin;
         if (user.value != null) {
           await store.writeStore(key: PreferenceManager.sessionId, value: user.value!.sessionId);
           Get.offAndToNamed(RouterNames.HOME);
@@ -44,6 +44,8 @@ class SignInController extends BaseController {
         onSuccess: (response) async {
           User userLogin = response as User;
           user.value = userLogin;
+          ClientData.user = userLogin;
+
           if (userLogin.sessionId.isNotEmpty) {
             await store.writeStore(key: PreferenceManager.sessionId, value: user.value!.sessionId);
           } else {

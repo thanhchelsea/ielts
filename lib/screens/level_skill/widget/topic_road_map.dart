@@ -44,11 +44,12 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
       size: size,
       child: _makeListTopic(widget.topics),
       painter: Drawline(
-          row: rowTopic,
-          lastIndexUnlock: lastIndexUnlock,
-          color: AppColors.colorCardPrimary,
-          rowPadding: rowTopicSpacing,
-          topicsLength: widget.topics.length),
+        row: rowTopic,
+        lastIndexUnlock: lastIndexUnlock,
+        color: AppColors.colorCardPrimary,
+        rowPadding: rowTopicSpacing,
+        topicsLength: widget.topics.length,
+      ),
     );
   }
 
@@ -61,8 +62,9 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
     int lastChildLock = 0;
     for (int index = 0; index < topics.length; index++) {
       Topic topic = topics[index];
-      var isLock = true;
-      if ((topic.topicProgress?.progress ?? 0) == 0) {
+      bool isLock = topic.getTopicProgress().progress == null ||
+          topic.getTopicProgress().progress == 0; //check progress set lock for topic <3 pu
+      if (!isLock) {
         //check lock topic here
         lastIndexUnlock = index;
       }
@@ -77,11 +79,12 @@ class _TopicRoadMapState extends State<TopicRoadMap> {
           widgets.add(widget);
         } else if (index > 0 && childs.length == 2 && index % 3 == 1 && index == topics.length - 1) {
           childs.insert(
-              2,
-              const SizedBox(
-                width: 102.4,
-                height: 102.4,
-              ));
+            2,
+            const SizedBox(
+              width: 102.4,
+              height: 102.4,
+            ),
+          );
         }
       } else {
         childs.insert(0, _makeTopicItem(topic, index, topic.id == lastChildLock, isLock));

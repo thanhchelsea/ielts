@@ -120,7 +120,7 @@ class SpeakingController extends BaseController {
     appRecorder.value = AppRecorder();
     appRecorder.value.startIt(folderName: topic.value!.id.toString());
     await getRecords();
-    dataSubList.value = stringToListString();
+    dataSubList.value = ClientUltis.stringToListString(data);
     super.onReady();
   }
 
@@ -130,12 +130,6 @@ class SpeakingController extends BaseController {
   }
 
   RxList<String> dataSubList = <String>[].obs;
-  List<String> stringToListString() {
-    List<String> s = [];
-    s = data.replaceAll(RegExp('\\n'), ' ').split(" ");
-
-    return s;
-  }
 
 //recorder
   Timer? timer;
@@ -249,7 +243,6 @@ class SpeakingController extends BaseController {
         Get.dialog(
           DialogApp(
             icon: SvgPicture.asset(AppImages.delete),
-            // icon: Image(image: AssetImage(AppImages.again)),
             titleCofirm: "Exit",
             titleCancle: "Keep recording",
             description: "Not finished recording, do you want to exit?",
@@ -273,78 +266,80 @@ class SpeakingController extends BaseController {
   }
 
   onTapMoreOfFile(FileSystemEntity fileSystemEntity) {
-    BottomSheetApp().showActionSheet(actions: [
-      ActionBottomSheet(
-        title: "Share(pro)",
-        onTap: () {},
-      ),
-      ActionBottomSheet(
-        title: "Rename",
-        onTap: () async {
-          Get.back();
-          Get.dialog(
-            DialogApp(
-              icon: Text(
-                "Rename",
-                style: StyleApp.titleNormal(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
+    BottomSheetApp().showActionSheet(
+      actions: [
+        ActionBottomSheet(
+          title: "Share(pro)",
+          onTap: () {},
+        ),
+        ActionBottomSheet(
+          title: "Rename",
+          onTap: () async {
+            Get.back();
+            Get.dialog(
+              DialogApp(
+                icon: Text(
+                  "Rename",
+                  style: StyleApp.titleNormal(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              // icon: Image(image: AssetImage(AppImages.again)),
-              titleCofirm: "Rename",
-              titleCancle: "Cancel",
-              description: "",
-              desWidget: Form(
-                key: _formKey,
-                child: InputFiledCustom(
-                  fillColor: Color(0xffEAEAEA).withOpacity(0.8),
-                  controller: textEditingCtrl,
-                  // iconPrefix: Icon(AppIcons.user),
-                  labelText: "${ClientUltis.getFileName(fileSystemEntity.path).split(".").first}",
-                  validator: (v) {
-                    return Validator().nameFile(v ?? "");
-                  },
-                  keyboardType: TextInputType.emailAddress,
-                  onChanged: (value) => null,
-                  color: AppColors.colorDark,
+                // icon: Image(image: AssetImage(AppImages.again)),
+                titleCofirm: "Rename",
+                titleCancle: "Cancel",
+                description: "",
+                desWidget: Form(
+                  key: _formKey,
+                  child: InputFiledCustom(
+                    fillColor: Color(0xffEAEAEA).withOpacity(0.8),
+                    controller: textEditingCtrl,
+                    // iconPrefix: Icon(AppIcons.user),
+                    labelText: "${ClientUltis.getFileName(fileSystemEntity.path).split(".").first}",
+                    validator: (v) {
+                      return Validator().nameFile(v ?? "");
+                    },
+                    keyboardType: TextInputType.emailAddress,
+                    onChanged: (value) => null,
+                    color: AppColors.colorDark,
+                  ),
                 ),
-              ),
-              onCancel: () async {
-                Get.back();
-                textEditingCtrl.text = "";
-              },
-              onConfirm: () async {
-                if (_formKey.currentState!.validate()) {
-                  if (File(fileSystemEntity.path).existsSync() && textEditingCtrl.text.isNotEmpty) {
-                    var path = fileSystemEntity.path;
-                    var lastSeparator = path.lastIndexOf(Platform.pathSeparator);
-
-                    var newPath = path.substring(0, lastSeparator + 1) + "${textEditingCtrl.text}.aac";
-                    int index = recordeds.indexWhere((element) => element.path == fileSystemEntity.path);
-                    var replace = await fileSystemEntity.rename(newPath);
-                    recordeds.removeAt(index);
-                    recordeds.insert(index, replace);
-                    textEditingCtrl.text = "";
-                  }
+                onCancel: () async {
                   Get.back();
-                }
-              },
-            ),
-          );
-        },
-      ),
-      ActionBottomSheet(
-        title: "Delete",
-        onTap: () async {
-          if (File(fileSystemEntity.path).existsSync()) {
-            await File(fileSystemEntity.path).delete();
-            recordeds.remove(fileSystemEntity);
-          }
-          Get.back();
-        },
-      ),
-    ]);
+                  textEditingCtrl.text = "";
+                },
+                onConfirm: () async {
+                  if (_formKey.currentState!.validate()) {
+                    if (File(fileSystemEntity.path).existsSync() && textEditingCtrl.text.isNotEmpty) {
+                      var path = fileSystemEntity.path;
+                      var lastSeparator = path.lastIndexOf(Platform.pathSeparator);
+
+                      var newPath = path.substring(0, lastSeparator + 1) + "${textEditingCtrl.text}.aac";
+                      int index = recordeds.indexWhere((element) => element.path == fileSystemEntity.path);
+                      var replace = await fileSystemEntity.rename(newPath);
+                      recordeds.removeAt(index);
+                      recordeds.insert(index, replace);
+                      textEditingCtrl.text = "";
+                    }
+                    Get.back();
+                  }
+                },
+              ),
+            );
+          },
+        ),
+        ActionBottomSheet(
+          title: "Delete",
+          onTap: () async {
+            if (File(fileSystemEntity.path).existsSync()) {
+              await File(fileSystemEntity.path).delete();
+              recordeds.remove(fileSystemEntity);
+            }
+            Get.back();
+          },
+        ),
+      ],
+    );
   }
 
   @override
