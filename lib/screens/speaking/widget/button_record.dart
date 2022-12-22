@@ -24,11 +24,13 @@ class MicroComponent extends StatefulWidget {
     required this.onTap,
     required this.recording,
     this.onLongPressedEnd,
+    this.size,
   });
   // final double size;
   final Color color;
   final VoidCallback onTap;
   final VoidCallback? onLongPressedEnd;
+  double? size;
   bool recording;
   @override
   _RipplesAnimationState createState() => _RipplesAnimationState();
@@ -76,7 +78,7 @@ class _RipplesAnimationState extends State<MicroComponent> with TickerProviderSt
                     ),
                   ),
                   child: Container(
-                    padding: EdgeInsets.all(padding10),
+                    // padding: EdgeInsets.all(padding10),
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
@@ -87,19 +89,21 @@ class _RipplesAnimationState extends State<MicroComponent> with TickerProviderSt
                     ),
                     child: const Icon(
                       Icons.pause,
-                      size: 30,
+                      size: 22,
                       color: Colors.white,
                     ),
                   ),
                 )
               : Container(
-                  padding: EdgeInsets.all(padding10),
+                  padding: EdgeInsets.all(padding_6),
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Color(0xffFFE4DE),
                   ),
                   child: Container(
-                    padding: EdgeInsets.all(padding14),
+                    padding: EdgeInsets.all(0),
+                    width: widget.size != null ? widget.size! - 20 : 50,
+                    height: widget.size != null ? widget.size! - 20 : 50,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
@@ -110,7 +114,7 @@ class _RipplesAnimationState extends State<MicroComponent> with TickerProviderSt
                     ),
                     child: const Icon(
                       AppIcons.mic,
-                      size: 30,
+                      size: 20,
                       color: Colors.white,
                     ),
                   ),
@@ -138,8 +142,9 @@ class _RipplesAnimationState extends State<MicroComponent> with TickerProviderSt
                   )
                 : null,
             child: Container(
-              width: 70.w,
-              height: 70.w,
+              width: widget.size ?? 70.w,
+              height: widget.size ?? 70.w,
+              alignment: Alignment.center,
               // color: Colors.red,
               child: _button(),
             ),

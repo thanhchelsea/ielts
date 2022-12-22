@@ -7,7 +7,7 @@ class Configs {
   static const int LOGIN_WRONG_PASSWORD = 3;
   static const int TOKEN_VALID = -2;
   static const int LOGIN_NOT_EXISTED = 8;
-
+  static const double PASS_PARAM_DOC = 0.8;
   static const int SUCCESS = 0;
   static const int FAIL = -1;
 

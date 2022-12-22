@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:ielts/base/index.dart';
 import 'package:ielts/index.dart';
 import 'package:ielts/screens/sign_in/index.dart';
+import 'package:logger/logger.dart';
 
 class LevelSkillController extends BaseController {
   static LevelSkillController to = Get.find();
@@ -15,7 +16,7 @@ class LevelSkillController extends BaseController {
   int courseId = 5112644562321408;
   Future loadTopicByParent({int? parentId}) async {
     String ssId = SignInController.to.getSessionId();
-    var getTopic = serverRepo.getTopic(
+    var getTopic = serverRepo.getTopics(
       sessionId: ssId,
       parentId: "${parentId ?? courseId}",
       courseId: "$courseId",
@@ -51,6 +52,7 @@ class LevelSkillController extends BaseController {
     bool nextTopic = false,
   }) {
     topicChildSelected.value = t;
+    Logger().d("topic child selected id: ${t.id}");
     if (nextTopic) {
       //next topic in video
       int index = 0;

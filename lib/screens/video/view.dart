@@ -6,6 +6,8 @@ import 'package:ielts/index.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+import '../../widget/index.dart';
+
 class VideoUI extends BaseView<VideoController> {
   @override
   PreferredSizeWidget? appBar(BuildContext context) {
@@ -37,15 +39,10 @@ class VideoUI extends BaseView<VideoController> {
       height: Get.height / 3.5,
       child: Obx(
         () {
-          if (controller.chewieController.value != null && controller.videoPlayerController != null) {
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Container(
-                color: Colors.black,
-                child: Chewie(
-                  controller: controller.chewieController.value!,
-                ),
-              ),
+          if (controller.video.value != null) {
+            return VideoCustom(
+              idParentOfVideo: controller.video.value!.id,
+              textContainLinkVideo: controller.video.value!.description,
             );
           }
           return Container();
@@ -220,60 +217,6 @@ class VideoUI extends BaseView<VideoController> {
             ),
           ),
         ),
-        //  ListView.builder(
-        //   controller: ScrollController(),
-        //   padding: EdgeInsets.only(top: padding10, bottom: 350.h),
-        //   // shrinkWrap: true,
-        //   itemCount: controller.documents.length,
-        //   // physics: NeverScrollableScrollPhysics(),
-        //   itemBuilder: (context, index) {
-        //     return Container(
-        //       margin: EdgeInsets.only(bottom: padding10),
-        //       // padding: EdgeInsets.symmetric(horizontal: padding14, vertical: padding14),
-        //       decoration: BoxDecoration(
-        //         color: Get.theme.cardColor,
-        //         borderRadius: BorderRadius.circular(10),
-        //       ),
-        //       child: Container(
-        //         child: ExpansionTile(
-        //           trailing: const Icon(
-        //             AppIcons.download,
-        //             color: AppColors.colorActive,
-        //             size: 20,
-        //           ),
-        //           title: Row(
-        //             children: [
-        //               SizedBox(width: padding_2),
-        //               const Icon(
-        //                 AppIcons.document,
-        //               ),
-        //               SizedBox(width: padding10),
-        //               Expanded(
-        //                 child: Text(
-        //                   controller.documents[index].title,
-        //                   style: StyleApp.titleNormal(
-        //                     fontSize: 14.sp,
-        //                   ),
-        //                 ),
-        //               ),
-        //             ],
-        //           ),
-        //           children: <Widget>[
-        //             Container(
-        //                 margin: EdgeInsets.symmetric(horizontal: padding12),
-        //                 // width: 300,
-        //                 height: 500.h,
-        //                 child: SfPdfViewer.network(
-        //                   controller.documents[index].url,
-        //                 )
-        //                 // child: SfPdfViewer.network(controller.documents[index].url),
-        //                 ),
-        //           ],
-        //         ),
-        //       ),
-        //     );
-        //   },
-        // ),
       ),
     );
   }

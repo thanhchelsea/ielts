@@ -10,6 +10,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:ielts/index.dart';
 import 'package:ielts/utils/client_utils.dart';
 
+import 'primary_button.dart';
+
 class RecordWidget extends StatelessWidget {
   RecordWidget({
     Key? key,
@@ -20,22 +22,17 @@ class RecordWidget extends StatelessWidget {
   Function onTapMore;
   @override
   Widget build(BuildContext context) {
-    AudioController audioCtrl = Get.put(AudioController(filePath: file.path),
-        tag: file.path.split("/").last);
+    AudioController audioCtrl = Get.put(AudioController(filePath: file.path), tag: file.path.split("/").last);
     return Container(
-      padding:
-          EdgeInsets.symmetric(vertical: halfPadding, horizontal: halfPadding),
-      decoration: BoxDecoration(
-          color: Get.theme.cardColor,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(0, 6),
-              blurRadius: 10,
-              spreadRadius: 0,
-              color: Color(0xff6F87C3).withOpacity(0.2),
-            )
-          ]),
+      padding: EdgeInsets.symmetric(vertical: halfPadding, horizontal: halfPadding),
+      decoration: BoxDecoration(color: Get.theme.cardColor, borderRadius: BorderRadius.circular(16), boxShadow: [
+        BoxShadow(
+          offset: Offset(0, 6),
+          blurRadius: 10,
+          spreadRadius: 0,
+          color: Color(0xff6F87C3).withOpacity(0.2),
+        )
+      ]),
       child: Column(
         children: [
           Row(
@@ -47,9 +44,7 @@ class RecordWidget extends StatelessWidget {
                 },
                 child: Obx(
                   () => Icon(
-                    !audioCtrl.isPlaying.value
-                        ? Icons.play_circle_outline_outlined
-                        : Icons.pause,
+                    !audioCtrl.isPlaying.value ? Icons.play_circle_outline_outlined : Icons.pause,
                     color: AppColors.colorInActive,
                     size: 20,
                   ),
@@ -69,15 +64,13 @@ class RecordWidget extends StatelessWidget {
                                 child: LinearProgressIndicator(
                                   value: audioCtrl.duration.value != null
                                       ? ClientUltis.percentProgressBar(
-                                          snapshot.data as Duration,
-                                          audioCtrl.duration.value!)
+                                          snapshot.data as Duration, audioCtrl.duration.value!)
                                       : 0, // percent filled
                                   // ignore: prefer_const_constructors
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     AppColors.colorActive,
                                   ),
-                                  backgroundColor:
-                                      AppColors.colorActive.withOpacity(0.5),
+                                  backgroundColor: AppColors.colorActive.withOpacity(0.5),
                                 ),
                               ),
                             ),
@@ -91,9 +84,7 @@ class RecordWidget extends StatelessWidget {
                 margin: EdgeInsets.only(right: padding18),
                 child: Obx(
                   () => Text(
-                    audioCtrl.duration.value != null
-                        ? "${ClientUltis.getTimeAudio(audioCtrl.duration.value!)}"
-                        : "",
+                    audioCtrl.duration.value != null ? "${ClientUltis.getTimeAudio(audioCtrl.duration.value!)}" : "",
                     style: StyleApp.titleSmall(
                       fontSize: 10.sp,
                       color: AppColors.colorActive,
@@ -122,14 +113,12 @@ class RecordWidget extends StatelessWidget {
                   children: [
                     Text(
                       ClientUltis.getFileName(file.path),
-                      style: StyleApp.titleBold(
-                          fontSize: 13.sp, fontWeight: FontWeight.w600),
+                      style: StyleApp.titleBold(fontSize: 13.sp, fontWeight: FontWeight.w600),
                     ),
                     SizedBox(height: padding_4),
                     Text(
                       ClientUltis.getTimeCreteFile(file.path),
-                      style: StyleApp.titleBold(
-                          fontSize: 12.sp, fontWeight: FontWeight.normal),
+                      style: StyleApp.titleBold(fontSize: 12.sp, fontWeight: FontWeight.normal),
                     ),
                   ],
                 ),
@@ -139,8 +128,7 @@ class RecordWidget extends StatelessWidget {
                 labelText: "Submit",
                 onPressed: () {},
                 fontSizeText: 12.sp,
-                padding: EdgeInsets.symmetric(
-                    horizontal: halfPadding, vertical: padding_6),
+                padding: EdgeInsets.symmetric(horizontal: halfPadding, vertical: padding_6),
                 colorBackground: AppColors.colorActive,
                 borderRadius: 12,
                 showShadow: false,

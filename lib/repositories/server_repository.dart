@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:ielts/base/base_repository.dart';
 import 'package:ielts/utils/client_utils.dart';
 import 'package:logger/logger.dart';
@@ -68,7 +67,7 @@ class ServerRepository extends BaseRepository {
     }
   }
 
-  Future<List<Topic>> getTopic({required String sessionId, required String parentId, required String courseId}) async {
+  Future<List<Topic>> getTopics({required String sessionId, required String parentId, required String courseId}) async {
     List<Topic> topics = [];
     String endPoint = "${ApiConfig.BASE_URL}/get-topics-by-parentId";
     var params = {
@@ -85,6 +84,34 @@ class ServerRepository extends BaseRepository {
           return Topic.fromMap(e);
         }).toList();
         return topics;
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Card>> getCardBytopicId({
+    required List<int> ids,
+    required int courseId,
+    required String sessionId,
+  }) async {
+    List<Card> cards = [];
+
+    String endPoint = "${ApiConfig.BASE_URL}/get-cards";
+    var params = {
+      "courseId": '$courseId',
+      "ids": "${ClientUltis.getIdsFromList(ids)}",
+      "sessionId": "$sessionId",
+      "token": ApiConfig.TOKEN,
+    };
+    var diaCall = dioClient.post(endPoint, queryParameters: params);
+    try {
+      return callApiWithErrorParser(diaCall).then((response) {
+        Map<String, dynamic> data = response.data;
+        cards = (data['data'] as List).map((e) {
+          return Card.fromMap(e);
+        }).toList();
+        return cards;
       });
     } catch (e) {
       rethrow;

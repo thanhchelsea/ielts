@@ -9,13 +9,16 @@ import 'package:ielts/widget/custom_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:ui' as ui;
 
+import '../../widget/index.dart';
+
 class SpeakingUI extends BaseView<SpeakingController> {
   @override
   PreferredSizeWidget? appBar(BuildContext context) {
     return CustomAppBar(
       appBarTitleText: "Speaking",
       onBack: () {
-        controller.backScreenPrevious();
+        Get.back();
+        // controller.backScreenPrevious();
       },
     );
   }
@@ -29,21 +32,32 @@ class SpeakingUI extends BaseView<SpeakingController> {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: padding, vertical: halfPadding),
-                  child: TabBarPage(
-                    nameTabs: const ["Practice", "History"],
-                    iconTabs: const [AppIcons.practice, AppIcons.history],
-                    id: Get.currentRoute,
-                    tabsView: [practiceView(), Text("document")],
-                    marginTabbar: EdgeInsets.only(bottom: padding_6),
-                  ),
-                ),
+              GetX<SpeakingController>(
+                builder: (controller) {
+                  if (controller.cards.isEmpty) return Container();
+                  return VideoCustom(
+                    idParentOfVideo: controller.cards[0].id,
+                    textContainLinkVideo: controller.cards[0].frontText,
+                  );
+                },
               ),
+              SizedBox(height: 12.h),
+              practiceView()
+              // Expanded(
+              //   child: Container(
+              //     margin: EdgeInsets.symmetric(horizontal: padding, vertical: halfPadding),
+              //     child: TabBarPage(
+              //       nameTabs: const ["Practice", "History"],
+              //       iconTabs: const [AppIcons.practice, AppIcons.history],
+              //       id: Get.currentRoute,
+              //       tabsView: [practiceView(), Text("document")],
+              //       marginTabbar: EdgeInsets.only(bottom: padding_6),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
-          Positioned(bottom: 0, child: bottomTab()),
+          // Positioned(bottom: 0, child: bottomTab()),
         ],
       ),
     );
@@ -60,63 +74,73 @@ class SpeakingUI extends BaseView<SpeakingController> {
           ),
           child: Column(
             children: [
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: padding, vertical: padding),
-                decoration: BoxDecoration(
-                  color: Get.theme.cardColor,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Obx(
-                  () => GrammarAndSpellingCheckDoc(
-                    doc: controller.dataSubList.value,
-                    textReaded: [
-                      // "how",
-                      "world",
-                      "war",
-                      "changed",
-                      "changed",
-                      "states",
-                    ],
-                    // textReaded: Get.find<TextToSpeakController>().readed.value,
-                  ),
-                ),
-              ),
               Obx(
-                () => controller.recordeds.value.isNotEmpty
-                    ? Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(top: padding20),
-                              child: Text(
-                                "Voice Memos",
-                                style: StyleApp.titleBold(fontSize: 14.sp),
-                              ),
-                            ),
-                            SizedBox(height: padding_6),
-                            ListView(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              children: List.generate(
-                                controller.recordeds.length,
-                                (index) => Container(
-                                  margin: EdgeInsets.only(bottom: padding12),
-                                  child: RecordWidget(
-                                    file: controller.recordeds[index],
-                                    onTapMore: () {
-                                      controller.onTapMoreOfFile(controller.recordeds[index]);
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                () {
+                  if (controller.cards.isEmpty) return Container();
+                  return Container(
+                    decoration:
+                        BoxDecoration(color: Get.theme.cardColor, borderRadius: BorderRadius.circular(10), boxShadow: [
+                      BoxShadow(
+                        blurRadius: 20,
+                        spreadRadius: 1,
+                        color: Colors.black.withOpacity(0.04),
+                      ),
+                    ]),
+                    child: Column(
+                      children: [
+                        ...List.generate(
+                          controller.cards[0].childCards.length,
+                          (index) {
+                            return GrammarAndSpellingCheckDoc(
+                              key: Key(controller.cards[0].childCards[index].id.toString()),
+                              tag: controller.cards[0].childCards[index].id.toString(),
+                              doc: controller.subCards[controller.cards[0].childCards[index].id]?.dataSubList ?? [],
+                              onTextReaded: (texts) {
+                                print("thanhsu ${texts}");
+                              },
+                              isFocus: index == 0 ? true : false,
+                              // textReaded: ["I", "currently", "reside", "in", "balcony"],
+                            );
+                          },
                         ),
-                      )
-                    : Container(),
-              )
+                      ],
+                    ),
+                  );
+                },
+              ),
+              // Obx(
+              //   () => controller.recordeds.value.isNotEmpty
+              //       ? Column(
+              //           crossAxisAlignment: CrossAxisAlignment.start,
+              //           children: [
+              //             Container(
+              //               margin: EdgeInsets.only(top: padding20),
+              //               child: Text(
+              //                 "Voice Memos",
+              //                 style: StyleApp.titleBold(fontSize: 14.sp),
+              //               ),
+              //             ),
+              //             SizedBox(height: padding_6),
+              //             ListView(
+              //               shrinkWrap: true,
+              //               physics: NeverScrollableScrollPhysics(),
+              //               children: List.generate(
+              //                 controller.recordeds.length,
+              //                 (index) => Container(
+              //                   margin: EdgeInsets.only(bottom: padding12),
+              //                   child: RecordWidget(
+              //                     file: controller.recordeds[index],
+              //                     onTapMore: () {
+              //                       // controller.onTapMoreOfFile(controller.recordeds[index]);
+              //                     },
+              //                   ),
+              //                 ),
+              //               ),
+              //             ),
+              //           ],
+              //         )
+              //       : Container(),
+              // )
             ],
           ),
         ),
@@ -202,7 +226,7 @@ class SpeakingUI extends BaseView<SpeakingController> {
                     name: "Listen",
                     icon: AppIcons.listen,
                     onTap: () {
-                      controller.textToSpeakData();
+                      // controller.textToSpeakData();
                     },
                     isActive: Get.find<TextToSpeakController>().state == STATESTT.PLAYING,
                   ),
@@ -216,7 +240,7 @@ class SpeakingUI extends BaseView<SpeakingController> {
               Obx(
                 () => MicroComponent(
                   onTap: () {
-                    controller.startRecord();
+                    // controller.startRecord();
                   },
                   recording: controller.appRecorder.value.isRecording,
                 ),
@@ -226,7 +250,7 @@ class SpeakingUI extends BaseView<SpeakingController> {
                   name: "Record",
                   icon: AppIcons.record,
                   onTap: () {
-                    controller.reRecord();
+                    // controller.reRecord();
                   },
                   color: !controller.appRecorder.value.isRecording ? AppColors.colorInActive.withOpacity(0.4) : null,
                 ),
@@ -236,7 +260,7 @@ class SpeakingUI extends BaseView<SpeakingController> {
                   name: "Finish",
                   icon: AppIcons.finsh,
                   onTap: () {
-                    controller.finishRecord();
+                    // controller.finishRecord();
                   },
                   color: !controller.appRecorder.value.isRecording ? AppColors.colorInActive.withOpacity(0.4) : null,
                 ),
