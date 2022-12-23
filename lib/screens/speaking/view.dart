@@ -91,14 +91,22 @@ class SpeakingUI extends BaseView<SpeakingController> {
                         ...List.generate(
                           controller.cards[0].childCards.length,
                           (index) {
+                            print(controller.subCards[controller.cards[0].childCards[index].id]?.statusSpeech);
                             return GrammarAndSpellingCheckDoc(
                               key: Key(controller.cards[0].childCards[index].id.toString()),
                               tag: controller.cards[0].childCards[index].id.toString(),
                               doc: controller.subCards[controller.cards[0].childCards[index].id]?.dataSubList ?? [],
                               onTextReaded: (texts) {
-                                print("thanhsu ${texts}");
+                                print("thanhsuuuu $texts");
+                                controller.updateAnswerCard(
+                                  id: controller.cards[0].childCards[index].id,
+                                  result: texts,
+                                );
                               },
-                              isFocus: index == 0 ? true : false,
+                              isFocus: controller.subCards[controller.cards[0].childCards[index].id]?.statusSpeech ==
+                                      StatuSpeech.FOCUS ||
+                                  controller.subCards[controller.cards[0].childCards[index].id]?.statusSpeech !=
+                                      StatuSpeech.NONE,
                               // textReaded: ["I", "currently", "reside", "in", "balcony"],
                             );
                           },

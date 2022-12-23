@@ -146,4 +146,16 @@ class ClientUltis {
   static String generateTopicProgressId(int courseId, int topicId, String userId) {
     return courseId.toString() + "_" + topicId.toString() + "_" + userId;
   }
+
+  static int percentCompareDocs({required List<String> doc1, required List<String> doc2}) {
+    int per = 0;
+    int count = 0;
+    for (int i = 0; i < doc1.length; i++) {
+      if (doc1[i] == doc2[i]) {
+        count++;
+      }
+    }
+    per = (count / doc1.length).toInt();
+    return per;
+  }
 }

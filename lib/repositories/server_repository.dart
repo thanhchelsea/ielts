@@ -149,8 +149,10 @@ class ServerRepository extends BaseRepository {
     try {
       return callApiWithErrorParser(dioCall).then((response) {
         Map<String, dynamic> data = response.data;
-        VideoScenario videoScenario = VideoScenario.fromMap(data['data'][0]);
-        return videoScenario;
+        if ((data['data'] as List).isNotEmpty) {
+          VideoScenario videoScenario = VideoScenario.fromMap(data['data'][0]);
+          return videoScenario;
+        }
       });
     } catch (e) {
       rethrow;

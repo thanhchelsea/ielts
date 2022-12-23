@@ -200,7 +200,7 @@ class VideoCustomController extends BaseController {
     await callDataService(
       getDoucment,
       onSuccess: (response) {
-        videoScenario.value = response as VideoScenario;
+        if (response != null) videoScenario.value = response as VideoScenario;
       },
     );
   }
@@ -208,9 +208,10 @@ class VideoCustomController extends BaseController {
   String getLinkVideo(String description) {
     String url = "";
     var document = parse(description);
-    print("cxxxx ${document.getElementsByTagName("img")}}");
+
     url = document.getElementsByTagName("img")[0].attributes["src-video-js"].toString();
-    return url;
+    print("url video ${url.trim()} mm");
+    return url.trim();
   }
 
   List<Subtitle> convertStringToSubTitle(String vtt) {

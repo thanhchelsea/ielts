@@ -19,4 +19,7 @@ class Configs {
 
   //practie
   static const Duration maxRecordDuation = Duration(minutes: 5, seconds: 30);
+
+  //Game
+  static const String skipText = "SKIP_TEXT";
 }

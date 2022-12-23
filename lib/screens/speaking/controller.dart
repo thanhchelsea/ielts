@@ -52,6 +52,15 @@ class SpeakingController extends BaseController {
     super.onReady();
   }
 
+  bool updateAnswerCard({required int id, required List<String> result}) {
+    subCards[id]?.answerSublit = result;
+    subCards[id]?.caculatorPercentExactly();
+    subCards.refresh();
+    if (subCards[id]?.statusSpeech == StatuSpeech.PASS) return false;
+    return true;
+    // return xxx;
+  }
+
   Future loadCardByTopic() async {
     String ssid = signInCtrl.getSessionId();
     var getCards = serverRepo.getCardBytopicId(
@@ -66,17 +75,21 @@ class SpeakingController extends BaseController {
         cards.forEach((element) {
           //spred parent Card
           if (element.childCards.isNotEmpty) {
-            element.childCards.forEach((childElement) {
-              //spred child card
+            for (int i = 0; i < element.childCards.length; i++) {
               subCards.putIfAbsent(
-                childElement.id,
+                element.childCards[i].id,
                 () => CheckExactlyAnswer(
-                  dataSubList: ClientUltis.stringToListString(childElement.frontText),
+                  dataSubList: [
+                    "hello",
+                    "screen",
+                    "view"
+                  ], // ClientUltis.stringToListString(element.childCards[i].frontText),
                   answerSublit: [],
-                  card: childElement,
+                  card: element.childCards[i],
+                  statusSpeech: i == 0 ? StatuSpeech.FOCUS : StatuSpeech.NONE,
                 ),
               );
-            });
+            }
           }
         });
       },
@@ -393,13 +406,33 @@ class CheckExactlyAnswer {
   List<String> dataSubList;
   List<String> answerSublit;
   Card card;
-  double percentExactly = 0;
+  int percentExactly = 0;
+  StatuSpeech statusSpeech;
   CheckExactlyAnswer({
     required this.dataSubList,
     required this.answerSublit,
     required this.card,
+    this.statusSpeech = StatuSpeech.NONE,
   });
   void caculatorPercentExactly() {
-    percentExactly = 0;
+    if (answerSublit.length == dataSubList.length) {
+      percentExactly = ClientUltis.percentCompareDocs(doc1: dataSubList, doc2: answerSublit);
+      if (percentExactly >= Configs.PASS_PARAM_DOC) {
+        statusSpeech = StatuSpeech.PASS;
+      } else {
+        statusSpeech = StatuSpeech.FAIL;
+      }
+    } else {
+      statusSpeech = StatuSpeech.SPEECHING;
+    }
+    // percentExactly = 0;
   }
+}
+
+enum StatuSpeech {
+  NONE,
+  FOCUS,
+  SPEECHING,
+  PASS,
+  FAIL,
 }

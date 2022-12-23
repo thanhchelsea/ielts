@@ -28,7 +28,7 @@ class Rectangle3D extends StatelessWidget {
                       BoxShadow(
                         color: Get.isDarkMode
                             ? Get.theme.shadowColor.withOpacity(0.4)
-                            : Color.fromARGB(255, 215, 215, 213),
+                            : Color(0xFF6F87C3).withOpacity(0.3),
                         blurRadius: 10,
                         spreadRadius: 2,
                         offset: Offset(0, 4),
@@ -55,14 +55,16 @@ class Rectangle3D extends StatelessWidget {
                     color: Get.theme.cardColor,
                     boxShadow: [
                       BoxShadow(
-                        color: Get.isDarkMode ? Get.theme.shadowColor.withOpacity(0.4) : Color(0xFFEBEBEB),
+                        color: Get.isDarkMode
+                            ? Get.theme.shadowColor.withOpacity(0.4)
+                            : Color(0xFF6F87C3).withOpacity(0.3),
                         blurRadius: 10,
                         spreadRadius: 0.01,
                         offset: Offset(0, -1),
                       ),
                     ],
                   ),
-                  padding: EdgeInsets.all(16.w),
+                  padding: EdgeInsets.only(top: 16.w),
                   child: child,
                 ),
               ),

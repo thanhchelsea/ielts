@@ -20,17 +20,23 @@ class GrammarAndSpellingCheckDoc extends StatelessWidget {
   }) : super(key: key);
   String tag;
   List<String> doc;
-  List<int> indexMatch = [];
   OnTextReaded? onTextReaded;
   bool isFocus;
 
   @override
   Widget build(BuildContext context) {
     return GetX<GrammarAndSpellingCheckDocController>(
-      init: GrammarAndSpellingCheckDocController(onReaded: onTextReaded),
+      init: GrammarAndSpellingCheckDocController(
+        onReaded: onTextReaded,
+        raw: doc,
+      ),
       tag: tag,
       builder: (controller) {
-        if (isFocus) return Rectangle3D(child: UIGame(controller));
+        if (isFocus) {
+          return Rectangle3D(
+            child: UIGame(controller),
+          );
+        }
         return UIGame(controller);
       },
     );
@@ -70,7 +76,7 @@ class GrammarAndSpellingCheckDoc extends StatelessWidget {
               isFocus
                   ? Container(
                       // color: Colors.red,
-                      margin: EdgeInsets.only(top: 40),
+                      margin: EdgeInsets.only(top: 30),
                       child: MicroComponent(
                         onTap: () {
                           controller.onTapMicro();
@@ -90,29 +96,8 @@ class GrammarAndSpellingCheckDoc extends StatelessWidget {
 
   Color colorText(int index, GrammarAndSpellingCheckDocController controller) {
     Color color = Colors.black;
-    if (index < controller.textRecogni.length) {
-      MatchStatus matchStatus = checkTextMatchWithIndex(
-        currentIndexText: doc[index],
-        afterIndexText: doc[index + 1 > doc.length ? index : index + 1],
-        textCurrentReaded: controller.textRecogni[index],
-      );
 
-      if (matchStatus == MatchStatus.MATCH_CURRENT) {
-        color = AppColors.colorPrimaryApp2;
-        indexMatch.add(index);
-      } else {
-        if ((matchStatus == MatchStatus.MATCH_AFTER)) {
-          int indexAfter = index + 1 > doc.length ? index : index + 1;
-          controller.textRecogni.insert(index, "111");
-          indexMatch.add(indexAfter);
-          color = AppColors.colorPrimaryApp2;
-        } else {
-          color = AppColors.errorColor;
-        }
-      }
-      // print(controller.textRecogni);
-    }
-    return indexMatch.contains(index)
+    return controller.checkTextMatch(index)
         ? AppColors.colorPrimaryApp2
         : index < controller.textRecogni.length
             ? AppColors.errorColor
@@ -142,13 +127,20 @@ class GrammarAndSpellingCheckDoc extends StatelessWidget {
 
 class GrammarAndSpellingCheckDocController extends GetxController {
   RxBool isTargetDoc = false.obs;
-  List<int> indexMatch = [];
   Rxn<SpeechToText> speechToText = Rxn<SpeechToText>();
   RxBool isListening = false.obs;
   RxList<String> textRecogni = <String>[].obs;
   OnTextReaded? onTextReaded;
-  GrammarAndSpellingCheckDocController({OnTextReaded? onReaded}) {
-    this.onTextReaded = onReaded;
+  late List<String> doc;
+
+  RxList<int> indexMatch = <int>[].obs;
+
+  GrammarAndSpellingCheckDocController({
+    OnTextReaded? onReaded,
+    required List<String> raw,
+  }) {
+    onTextReaded = onReaded;
+    doc = raw;
   }
 
   @override
@@ -207,13 +199,40 @@ class GrammarAndSpellingCheckDocController extends GetxController {
     await speechToText.value!.stop();
   }
 
+  bool checkTextMatch(int index) {
+    bool check = false;
+    if (index < textRecogni.length) {
+      MatchStatus matchStatus = checkTextMatchWithIndex(
+        currentIndexText: doc[index],
+        afterIndexText: doc[index + 1 > doc.length - 1 ? index : index + 1],
+        textCurrentReaded: textRecogni[index],
+      );
+
+      if (matchStatus == MatchStatus.MATCH_CURRENT) {
+        indexMatch.add(index);
+      } else {
+        if ((matchStatus == MatchStatus.MATCH_AFTER)) {
+          int indexAfter = index + 1 > doc.length ? index : index + 1;
+          textRecogni.insert(index, "${Configs.skipText} ");
+          indexMatch.add(indexAfter);
+        } else {}
+      }
+      // print(controller.textRecogni);
+    }
+    if (indexMatch.contains(index)) {
+      check = true;
+    }
+    return check;
+  }
+
   void _onSpeechResult(SpeechRecognitionResult result) {
-    // print(result.recognizedWords);
+    print(result.recognizedWords);
     textRecogni.value = result.recognizedWords.split(" ");
+
     if (onTextReaded != null) {
       onTextReaded!(textRecogni.value);
     }
-    String lastText = result.recognizedWords.split(" ").last;
+    // String lastText = result.recognizedWords.split(" ").last;
     // if (lastText.isNotEmpty) {
     //   if (!ClientUltis.textCompareTo(text1: lastText, text2: textRecogni.isNotEmpty ? textRecogni.last : "")) {
     //     textRecogni.add(lastText);
@@ -233,6 +252,24 @@ class GrammarAndSpellingCheckDocController extends GetxController {
     await speechToText.value!.stop();
     await speechToText.value!.cancel();
     super.onClose();
+  }
+
+  MatchStatus checkTextMatchWithIndex({
+    required String currentIndexText,
+    required String afterIndexText,
+    required String textCurrentReaded,
+  }) {
+    // print("$currentIndexText  $afterIndexText  $textCurrentReaded");
+    bool checkReadedWithCurrentDoc = ClientUltis.textCompareTo(text1: currentIndexText, text2: textCurrentReaded);
+    if (checkReadedWithCurrentDoc) {
+      return MatchStatus.MATCH_CURRENT;
+    } else {
+      bool checkReadedWithAfterDoc = ClientUltis.textCompareTo(text1: afterIndexText, text2: textCurrentReaded);
+      if (checkReadedWithAfterDoc) {
+        return MatchStatus.MATCH_AFTER;
+      }
+    }
+    return MatchStatus.DONT_MATCH;
   }
 }
 
