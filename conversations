@@ -1,14 +1,13 @@
 {
- "status":1,
-"message" :"success",
-"data":{
-[
+  "status": 1,
+  "message": "success",
+  "data": [
     {
       "id": "10799fb8-64f7-4296-bbf7-b42bfbe0ae542",
       "name": "New chat1",
       "inputs": {
-          "book": "book",
-          "myName": "Lucy"
+        "book": "book",
+        "myName": "Lucy"
       },
       "status": "normal",
       "created_at": 1679667915
@@ -17,12 +16,11 @@
       "id": "10799fb8-64f7-4296-bbf7-b42bfbe0ae543",
       "name": "New chat2",
       "inputs": {
-          "book": "book",
-          "myName": "Lucy"
+        "book": "book",
+        "myName": "Lucy"
       },
       "status": "normal",
       "created_at": 1689667915
-    },
-]
-
+    }
+  ]
 }
